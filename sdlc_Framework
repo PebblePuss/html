@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://kit.fontawesome.com/b7f1fdd333.js" crossorigin="anonymous"></script>
+        <title>SDLC-Framework</title>
+    </head>
+    <body>
+        <style>
+            /* ROOT COLOR DEFINE */
+            :root {
+                --doosan-main-color     : #005EBD;
+                --doosan-main-color-bk  : #004a94;
+                --doosan-main-color-bk2 : #003366;
+
+                --doosan-main-color-lt  : #4D8CF5;
+                --doosan-main-color-lt2 : #3A78D1;
+                --doosan-main-color-lt3 : #2A63AD;
+
+                --white-color           : #f1f1f1;
+                --gray-color            : #d9d9d9;
+                --gray-color-dark       : #a6a6a6;
+                --black-color           : #333333;
+                --black-color-dark      : #1a1a1a;
+
+                --beige-color           : #CEC495;
+                --beige-color-light     : #E3DDB8;
+                --beige-color-dark      : #A89F73;
+
+                --approval-doobuy-color : #FAA300;
+                --hover-doobuy-color    : #FFC14D;
+                --approval-doobm-color  : #D85F5F;
+                --hover-doobm-color     : #FF8080;
+                --approval-epms-color   : #007F5F;
+                --hover-epms-color      : #00A27F;
+                --approval-sn-color     : #3965C5;
+                --hover-sn-color        : #5A85E7;
+            }
+
+            .sdlc-framework-container * {
+                margin: 0;
+                padding: 0;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+            }
+        </style>
+
+        <!-- DATA INPUT -->
+        <script>
+            const legend = {
+                doobuy: {
+                    name: "DooBuy",
+                    fullName: "두산 구매 시스템",
+                    color: "#4E71FF",
+                    icon: "fa-solid fa-credit-card"
+                },
+                doobm: {
+                    name: "DooBM",
+                    fullName: "두산 업무 관리 시스템",
+                    color: "#5409DA",
+                    icon: "fa-solid fa-file"
+                },
+                epms: {
+                    name: "EPMS",
+                    fullName: "프로젝트 관리 시스템",
+                    color: "#FF6B35",
+                    icon: "fa-solid fa-diagram-project"
+                },
+                servicenavigator: {
+                    name: "Service Navigator",
+                    fullName: "서비스 관리 시스템",
+                    color: "#28A745",
+                    icon: "fa-solid fa-screwdriver-wrench"
+                }
+            };
+
+            const columnContent = {
+                sales: {
+                    id: "sdlc-header-category-sales",
+                    name: "Sales",
+                    description: "영업 및 사업 검토 단계",
+                    order: 1,
+                    process: [
+                        {
+                            name: "사업검토",
+                            description: "사업 타당성 및 수익성 검토"
+                        }
+                    ],
+                    approval: [
+                        {
+                            name: "견적 요청",
+                            site: "doobuy",
+                            description: "외부 업체 견적 요청 및 검토",
+                            required: {
+                                value: true,
+                                condition: "외부 견적 필요 시"
+                            }
+                        },
+                        {
+                            name: "수주 품의",
+                            site: "doobm",
+                            description: "수주 승인을 위한 품의서 작성 및 결재",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "구매 요청",
+                            site: "doobuy",
+                            description: "필요 자원 및 장비 구매 요청",
+                            required: {
+                                value: true,
+                                condition: "외부 구매 필요 시"
+                            }
+                        }
+                    ]
+                },
+                dev: {
+                    id: "sdlc-header-category-dev",
+                    name: "Dev (프로젝트)",
+                    description: "개발 프로젝트 수행 단계",
+                    order: 2,
+                    process: [
+                        {
+                            name: "분석",
+                            description: "요구사항 분석 및 정의"
+                        },
+                        {
+                            name: "설계/개발",
+                            description: "시스템 설계 및 개발 수행"
+                        },
+                        {
+                            name: "테스트",
+                            description: "단위/통합/시스템 테스트"
+                        },
+                        {
+                            name: "오픈/안정화",
+                            description: "시스템 오픈 및 안정화"
+                        }
+                    ],
+                    approval: [
+                        {
+                            name: "사업수행 계획보고",
+                            site: "epms",
+                            description: "프로젝트 수행 계획 및 일정 보고",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "계약변경 품의",
+                            site: "doobm",
+                            description: "계약 조건 변경 시 품의",
+                            required: {
+                                value: false,
+                                condition: "계약 변경 시"
+                            }
+                        },
+                        {
+                            name: "프로젝트 계획/원가 변경품의",
+                            site: "epms",
+                            description: "프로젝트 계획 또는 원가 변경 품의",
+                            required: {
+                                value: false,
+                                condition: "계획/원가 변경 시"
+                            }
+                        },
+                        {
+                            name: "청구요청 품의",
+                            site: "doobm",
+                            description: "고객 청구 요청 품의",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "지급요청 품의",
+                            site: "doobuy",
+                            description: "외부 업체 지급 요청 품의",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "보안성 검토",
+                            site: "epms",
+                            description: "시스템 보안성 검토 및 승인",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "완료보고",
+                            site: "epms",
+                            description: "프로젝트 완료 보고서 작성 및 제출",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        }
+                    ]
+                },
+                ops: {
+                    id: "sdlc-header-category-ops",
+                    name: "Ops (운영)",
+                    description: "시스템 운영 및 유지보수 단계",
+                    order: 3,
+                    process: [
+                        {
+                            name: "운영/유지보수",
+                            description: "시스템 운영 및 지속적 유지보수"
+                        }
+                    ],
+                    approval: [
+                        {
+                            name: "장애훈련 계획/실적 보고",
+                            site: "servicenavigator",
+                            description: "장애 대응 훈련 계획 수립 및 실적 보고",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "IT서비스 결과보고",
+                            site: "servicenavigator",
+                            description: "IT 서비스 운영 결과 정기 보고",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        },
+                        {
+                            name: "장애조치 결과보고",
+                            site: "servicenavigator",
+                            description: "시스템 장애 발생 시 조치 결과 보고",
+                            required: {
+                                value: true,
+                                condition: null
+                            }
+                        }
+                    ]
+                }
+            };
+
+            
+            const RowContent = [
+                { name : "진행", order : 2},
+                { name : "품의", order : 1},
+                { name : "절차", order : 1},
+                { name : "도구", order : 1},
+                { name : "가이드", order : 1}
+            ];       
+        </script>
+
+        <!-- PAGE SETTING CODE -->
+        <script>
+            const mainContainerClass = 'sdlc-framework-container';
+            const mainTmpContainer = document.createElement('div');
+
+            mainTmpContainer.className = mainContainerClass;
+            const totalContentRow = 4;
+
+            (() => {
+                let totalProcess = Object.keys(columnContent).reduce((column, key) => {
+                    return column + columnContent[key].process.length;
+                }, 0);
+
+                mainTmpContainer.style.display = 'grid'
+                mainTmpContainer.style.gridTemplateColumns = `0.4fr repeat(${totalProcess - 1}, 1fr) 1.24fr`;
+                mainTmpContainer.style.gridTemplateRows = `0.4fr 0.5fr 0.6fr repeat(${totalContentRow}, 1fr)`;
+                mainTmpContainer.style.gap = '0.6rem';
+            })();
+
+            document.body.appendChild(mainTmpContainer);
+        </script>
+
+        <!-- MODAL PAGE TEMPLATE -->
+        <template></template>
+
+        <!-- CORE COMPONENT-->
+        <script>
+            /**
+             * @class Component
+             * @description
+             * DOM 요소와 템플릿을 기반으로 컴포넌트를 생성하고 관리하는 클래스.
+             * 이 클래스는 특정 DOM 요소에 템플릿을 렌더링하고, 이벤트를 설정하거나
+             * 컴포넌트를 제거하는 기능을 제공합니다.
+             *
+             * @example
+             * // HTML 템플릿 요소를 기반으로 컴포넌트 생성
+             * const template = document.getElementById('my-template');
+             * const component = new Component('#app', template);
+             *
+             * @param {string} $target - 컴포넌트를 렌더링할 대상 DOM 선택자 (예: '#app', 'body').
+             * @param {HTMLTemplateElement} $template - 컴포넌트의 템플릿 요소.
+             */
+            class Component {
+                /**
+                 * @constructor
+                 * @description
+                 * 생성자에서 `initComponent` 메서드를 호출하여 컴포넌트를 초기화합니다.
+                 *
+                 * @param {string} $target - 컴포넌트를 렌더링할 대상 DOM 선택자.
+                 * @param {HTMLTemplateElement} $template - 컴포넌트의 템플릿 요소.
+                 */
+                constructor($target, $template) {
+                    this.initComponent($target, $template);
+                }
+
+                /**
+                 * @method initComponent
+                 * @description
+                 * 대상 DOM 요소와 템플릿을 초기화하고, 템플릿을 DOM에 렌더링합니다.
+                 * 대상 요소가 존재하지 않거나 템플릿이 유효하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @param {string} target - 컴포넌트를 렌더링할 대상 DOM 선택자.
+                 * @param {HTMLTemplateElement} template - 컴포넌트의 템플릿 요소.
+                 * @throws {Error} 대상 DOM 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 * @throws {Error} 템플릿이 유효하지 않을 경우 에러를 발생시킵니다.
+                 */
+                initComponent(target, template) {
+                    this.target = target.toLowerCase() === "body"
+                        ? document.body
+                        : document.querySelector(target);
+
+                    if (!this.target) {
+                        throw new Error(`[Component Error] Target element "${target}" not found in the DOM.`);
+                    }
+
+                    this.template = template?.content?.cloneNode(true);
+
+                    if (!this.template) {
+                        throw new Error(`[Component Error] Template "${template?.id || 'unknown'}" is invalid or not found.`);
+                    }
+
+                    this.element = this.template.firstElementChild;
+                    this.target.appendChild(this.template);
+
+                    this.setEvent();
+                }
+
+                /**
+                 * @method setEvent
+                 * @description
+                 * 이벤트를 설정하는 메서드. 기본적으로 빈 메서드로 정의되어 있으며,
+                 * 하위 클래스에서 오버라이드하여 사용합니다.
+                 *
+                 * @example
+                 * class MyComponent extends Component {
+                 *     setEvent() {
+                 *         this.element.addEventListener('click', () => {
+                 *             console.log('Element clicked!');
+                 *         });
+                 *     }
+                 * }
+                 */
+                setEvent() {}
+
+                /**
+                 * @method destroy
+                 * @description
+                 * 컴포넌트를 DOM에서 제거합니다. `this.element`가 존재할 경우 해당 요소를 삭제합니다.
+                 *
+                 * @example
+                 * const component = new Component('#app', template);
+                 * component.destroy(); // 컴포넌트를 DOM에서 제거
+                 */
+                destroy() {
+                    if (this.element) {
+                        this.element.remove();
+                    }
+                }
+            }
+        </script>
+
+        <!-- TEMPLATE COMPONENT -->
+
+        <!-- Modal Component -->
+        <script>
+            /**
+             * @class Modal
+             * @extends Component
+             * @description
+             * 모달 컴포넌트를 생성하고 관리하는 클래스.
+             * 모달 닫기, 오버레이 클릭, 모달 본문 설정 등의 기능을 제공합니다.
+             *
+             * @example
+             * const modalTemplate = document.getElementById('modal-template');
+             * const modal = new Modal('#app', modalTemplate);
+             * modal.setBody('content-template-id');
+             */
+            class Modal extends Component {
+                /**
+                 * @method setEvent
+                 * @description
+                 * 모달의 이벤트를 설정합니다. 닫기 버튼 클릭, 오버레이 클릭, 모달 내부 클릭 이벤트를 처리합니다.
+                 *
+                 * @example
+                 * const modal = new Modal('#app', modalTemplate);
+                 * modal.setEvent();
+                 */
+                setEvent() {
+                    let closeButton = this.element.querySelector('.close-btn');
+                    if (closeButton) {
+                        closeButton.addEventListener('click', () => this.destroy());
+                    } else {
+                        console.warn('[Modal Warning] Close button (.closeBtn) not found.');
+                    }
+
+                    let modalOverlay = this.element;
+                    modalOverlay.addEventListener('click', () => this.destroy());
+
+                    let modalContent = this.element.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.addEventListener('click', (event) => event.stopPropagation());
+                    } else {
+                        console.warn('[Modal Warning] Modal content (.modal) not found.');
+                    }
+                }
+
+                /**
+                 * @method setBody
+                 * @description
+                 * 모달의 본문 내용을 설정합니다. 지정된 템플릿 ID를 기반으로 본문 내용을 추가합니다.
+                 *
+                 * @param {string} templateId - 본문 내용을 설정할 템플릿의 ID.
+                 * @throws {Error} 템플릿 ID가 유효하지 않거나 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * modal.setBody('content-template-id');
+                 */
+                 setBody(templateId) {
+                    let bodyTemplate = document.getElementById(templateId);
+                    if (!bodyTemplate) {
+                        throw new Error(`[Modal Error] Template with ID "${templateId}" not found.`);
+                    }
+
+                    if (!bodyTemplate.content || !bodyTemplate.content.firstElementChild) {
+                        throw new Error(`[Modal Error] Template with ID "${templateId}" is empty or invalid.`);
+                    }
+
+                    let clonedContent = bodyTemplate.content.cloneNode(true);
+
+                    let modalBody = this.element.querySelector('.modal-body');
+                    if (!modalBody) {
+                        throw new Error('[Modal Error] Modal body (.modal-body) not found.');
+                    }
+
+                    modalBody.innerHTML = '';
+                    modalBody.appendChild(clonedContent);
+                }
+            }
+        </script>
+
+        <template id="modal-template">
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <i class="fa-solid fa-xmark close-btn"></i>
+                    </div>
+                    <div class="modal-body"></div>
+                </div>
+            </div>
+        </template>
+
+        <style>
+            .modal-overlay {
+                display: flex;
+                position: fixed;
+
+                top: 0;
+                left: 0;
+
+                width: 100vw;
+                height: 100vh;
+
+                justify-content: center;
+                align-items: center;
+
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+    
+            .modal-content {
+                display: flex;
+                flex-direction: column;
+                gap: 0.6rem;
+
+                padding: 1rem;
+
+                max-width: 90%;
+                max-height: 80%;
+
+                background-color: #fff;
+                
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                
+                overflow: hidden;
+            }
+    
+            .modal-header {
+                display: flex;
+
+                justify-content: flex-end;
+            }
+    
+            .close-btn {
+                font-size: 20px;
+                color: #333;
+
+                cursor: pointer;
+            }
+    
+            .modal-body {
+                font-size: 16px;
+                color: #333;
+            }
+        </style>
+
+        <!-- Row Header Btn Component -->
+        <script>
+            /**
+             * @class RowBtn
+             * @extends Component
+             * @description
+             * 행 버튼(Row Button) 컴포넌트를 생성하고 관리하는 클래스.
+             * 텍스트를 설정하거나, 추가적인 기능을 확장하여 사용할 수 있습니다.
+             *
+             * @example
+             * // 템플릿을 기반으로 RowBtn 컴포넌트 생성
+             * const rowTemplate = document.getElementById('template-row-header');
+             * const rowBtn = new RowBtn('#app', rowTemplate);
+             * rowBtn.setText('Example Text');
+             */
+            class RowBtn extends Component {
+                /**
+                 * @method setText
+                 * @description
+                 * 행 버튼의 텍스트를 설정합니다. `.row-header-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
+                 *
+                 * @param {string} text - 설정할 텍스트 값.
+                 * @throws {Error} `.row-header-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * const rowBtn = new RowBtn('#app', rowTemplate);
+                 * rowBtn.setText('New Button Text');
+                 */
+                setText(text) {
+                    let rowHeaderText = this.element.querySelector(".row-header-text");
+                    if (!rowHeaderText) {
+                        console.error('[RowBtn Error] .row-header-text element not found.');
+                        return;
+                    }
+                    rowHeaderText.textContent = text;
+                }
+
+                setGrid(y, row) {
+                    this.element.style.gridColumn = '1 / 2'
+                    this.element.style.gridRow = `${y} / ${y + row}`;
+                }
+
+                setModalEvent(template) {
+                    this.element.addEventListener('click', () => {
+                        let modalTemp = document.getElementById('modal-template');
+                        if (!modalTemp) {
+                            console.error('[Modal Error] Modal template with ID "modal-template" not found.');
+                            return;
+                        }
+
+                        let modal = new Modal(`.${mainContainerClass}`, modalTemp);
+
+                        try {
+                            modal.setBody(template);
+                        } catch (error) {
+                            console.error(`[Modal Error] Failed to set modal body: ${error.message}`);
+                        }
+                    });
+                }
+            }
+        </script>
+
+        <template id="template-row-header">
+            <div class="row-header-btn">
+                <p class="row-header-text"></p>
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+        </template>
+
+        <style>
+            .row-header-btn {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                gap: 0.3rem;
+
+                padding: 0.6rem;
+
+                justify-content: space-between;
+
+                width: 100%;
+
+                font-size: 14px;
+                font-weight: 500;
+                text-align: left;
+                color: #333;
+
+                background-color: #f7f8fa;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+
+                transition: background-color 0.2s ease, box-shadow 0.2s ease;
+                cursor: pointer;
+            }
+
+            .row-header-btn:hover {
+                background-color: #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .row-header-btn:active {
+                background-color: #dfe3e6;
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .row-header-text {
+                flex: 1;
+                margin: 0;
+                
+                font-size: 14px;
+                font-weight: 500;
+                text-align: left;
+                color: #333;
+            }
+
+            .fa-circle-question {
+                font-size: 16px;
+                text-align: right;
+                color: #666;
+            }
+        </style>
+
+        <!-- Column Header Component -->
+        <script>
+            /**
+             * @class ColumnHeader
+             * @extends Component
+             * @description
+             * 열 헤더(Column Header) 컴포넌트를 생성하고 관리하는 클래스.
+             * 텍스트를 설정하거나, 추가적인 기능을 확장하여 사용할 수 있습니다.
+             *
+             * @example
+             * // 템플릿을 기반으로 ColumnHeader 컴포넌트 생성
+             * const columnTemplate = document.getElementById('template-column-header');
+             * const columnHeader = new ColumnHeader('#app', columnTemplate);
+             * columnHeader.setText('Example Column Header');
+             */
+            class ColumnHeader extends Component {
+                /**
+                 * @method setText
+                 * @description
+                 * 열 헤더의 텍스트를 설정합니다. `.column-header-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
+                 *
+                 * @param {string} text - 설정할 텍스트 값.
+                 * @throws {Error} `.column-header-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * const columnHeader = new ColumnHeader('#app', columnTemplate);
+                 * columnHeader.setText('New Column Header Text');
+                 */
+                setText(text) {
+                    const columnHeaderText = this.element.querySelector(".column-header-text");
+                    if (!columnHeaderText) {
+                        console.error('[ColumnHeader Error] .column-header-text element not found.');
+                        return;
+                    }
+                    columnHeaderText.textContent = text;
+                }
+
+                setGrid(x, reduceValue) {
+                    this.element.style.gridColumn = `${x} / ${x + reduceValue}`
+                    this.element.style.gridRow = '1 / 2';
+                }
+            }
+        </script>
+
+        <template id="template-column-header">
+            <div class="column-header">
+                <div class="column-header-line"></div>
+                <p class="column-header-text"></p>
+                <div class="column-header-line"></div>
+            </div>
+        </template>
+
+        <style>
+            .column-header {
+                display: flex;
+                flex-direction: row;
+                gap: 0.3rem;
+
+                align-items: center;
+            }
+
+            .column-header-line {
+                height: 0.03rem;
+
+                border: 0.04rem solid black;
+                background-color: black;
+
+                flex: 2;
+            }
+
+            .column-header-text {
+                text-align: center;
+                flex: 1;
+            }
+        </style>
+
+        <!-- Arrow Box Component -->
+        <script>
+            /**
+             * @class ArrowBox
+             * @extends Component
+             * @description
+             * 화살표 박스(Arrow Box) 컴포넌트를 생성하고 관리하는 클래스.
+             * 텍스트를 설정하거나, 화살표 모양의 색상을 동적으로 변경할 수 있습니다.
+             *
+             * @example
+             * // 템플릿을 기반으로 ArrowBox 컴포넌트 생성
+             * const arrowTemplate = document.getElementById('template-arrow-box');
+             * const arrowBox = new ArrowBox('#app', arrowTemplate);
+             * arrowBox.setText('Example Text');
+             * arrowBox.setColor('#FF5733');
+             */
+            class ArrowBox extends Component {
+                /**
+                 * @method setText
+                 * @description
+                 * 화살표 박스의 텍스트를 설정합니다. `.arrow-box__text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
+                 *
+                 * @param {string} text - 설정할 텍스트 값.
+                 * @throws {Error} `.arrow-box__text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * const arrowBox = new ArrowBox('#app', arrowTemplate);
+                 * arrowBox.setText('New Arrow Box Text');
+                 */
+                setText(text, size) {
+                    const arrowBoxText = this.element?.querySelector(".arrow-box-text");
+                    if (!arrowBoxText) {
+                        console.error('[ArrowBox Error] .arrow-box-text element not found.');
+                        return;
+                    }
+                    arrowBoxText.textContent = text;
+                    arrowBoxText.style.fontSize = size ? size : "1rem";
+                }
+
+                /**
+                 * @method setColor
+                 * @description
+                 * 화살표 모양의 색상을 설정합니다. `.arrow-box__shape` 클래스를 가진 요소의 배경색을 업데이트합니다.
+                 *
+                 * @param {string} color - 설정할 색상 값 (CSS 색상 값).
+                 * @throws {Error} `.arrow-box__shape` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * const arrowBox = new ArrowBox('#app', arrowTemplate);
+                 * arrowBox.setColor('#FF5733');
+                 */
+                setColor(color) {
+                    const arrowBoxShape = this.element?.querySelector(".arrow-box-shape");
+                    
+                    if (!arrowBoxShape) {
+                        console.error('[ArrowBox Error] .arrow-box-shape element not found.');
+                        return;
+                    }
+                    arrowBoxShape.style.backgroundColor = color;
+                }
+
+                setGrid(x, y) {
+                    const arrowContainer = this?.element;
+
+                    arrowContainer.style.gridColumn = `${x} / ${x + 1}`;
+                    arrowContainer.style.gridRow = `${y} / ${y + 1}`;
+                }
+            }
+        </script>
+
+        <template id="template-arrow-box">
+            <div class="arrow-box">
+                <div class="arrow-box-shape"></div>
+                <p class="arrow-box-text"></p>
+            </div>
+        </template>
+
+        <style>
+            .arrow-box {
+                display: flex;
+                position: relative;
+
+                width: 100%;
+                height: 100%;
+            }
+
+            .arrow-box-shape {
+                position: absolute;
+
+                top: 0;
+                bottom: 0;
+
+                width: 100%;
+                height: 100%;
+
+                clip-path: url(#rounded-polygon);
+
+                border-radius: 0.3rem;
+
+                z-index: 1;
+            }
+
+            .arrow-box-text {
+                display: flex;
+                position: absolute;
+                z-index: 2;
+
+                padding: 0 0.7rem 0 0.6rem !important;
+
+                top: 0;
+                bottom: 0;
+
+                justify-content: flex-start;
+                align-items: center;
+
+                word-break: keep-all;
+                white-space: wrap;
+
+                color: white;
+                font-weight: 435;
+            }
+        </style>
+
+        <!-- SVG Defining the Clip Path -->
+        <svg width="0" height="0">
+            <defs>
+                <clipPath id="rounded-polygon" clipPathUnits="objectBoundingBox">
+                    <path d="M 0.01,0
+                            L 0.745,0
+                            Q 0.77,0 0.825,0.02
+                            L 0.975,0.445
+                            Q 1,0.505 0.975,0.565
+                            L 0.825,0.98
+                            Q 0.77,1 0.745,1
+                            L 0.01,1
+                            Q 0,1 0,0.98
+                            L 0,0.02
+                            Q 0,0 0.01,0 z" />
+                    </clipPath>
+                </clipPath>
+            </defs>
+        </svg>
+
+        <!-- Round Link Button Component -->
+        <script>
+            /**
+             * @class RoundLinkButton
+             * @extends Component
+             * @description
+             * 둥근 링크 버튼(Round Link Button) 컴포넌트를 생성하고 관리하는 클래스.
+             * 텍스트를 설정하거나, 버튼의 링크를 동적으로 설정할 수 있습니다.
+             *
+             * @example
+             * // 템플릿을 기반으로 RoundLinkButton 컴포넌트 생성
+             * const buttonTemplate = document.getElementById('template-rounded-link-button');
+             * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
+             * roundLinkButton.setText('Example Button');
+             * roundLinkButton.setLink('https://example.com');
+             */
+            class RoundLinkButton extends Component {
+                /**
+                 * @method setText
+                 * @description
+                 * 둥근 링크 버튼의 텍스트를 설정합니다. `.rounded-link-button-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
+                 *
+                 * @param {string} text - 설정할 텍스트 값.
+                 * @throws {Error} `.rounded-link-button-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
+                 *
+                 * @example
+                 * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
+                 * roundLinkButton.setText('New Button Text');
+                 */
+                setText(text) {
+                    const buttonText = this.element.querySelector(".rounded-link-button-text");
+                    if (!buttonText) {
+                        console.error('[RoundLinkButton Error] .rounded-link-button-text element not found.');
+                        return;
+                    }
+                    buttonText.textContent = text;
+                }
+
+                /**
+                 * @method setLink
+                 * @description
+                 * 둥근 링크 버튼의 링크를 설정합니다. `data-url` 속성에 링크를 저장합니다.
+                 *
+                 * @param {string} link - 설정할 링크 값 (URL).
+                 *
+                 * @example
+                 * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
+                 * roundLinkButton.setLink('https://example.com');
+                 */
+                setLink(link) {
+                    this.element.dataset.url = link;
+                }
+            }
+        </script>
+
+        <template id="template-rounded-link-button">
+            <div class="rounded-link-button">
+                <p class="rounded-link-button-text"></p>
+                <i class="fa-solid fa-right-to-bracket rounded-link-button-icon"></i>
+            </div>
+        </template>
+
+        <style>
+            .rounded-link-button {
+                display: flex;
+                flex-direction: column;
+
+                padding: 0.8rem;
+
+                justify-content: space-between;
+
+                width: 100%;
+                height: 100%;
+
+                background-color: #005EBD;
+                color: #fff;
+
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+                cursor: pointer;
+                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .rounded-link-button-text {
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin: 0;
+            }
+            .rounded-link-button-icon {
+                display: none;
+                text-align: end;
+            }
+
+            .rounded-link-button:hover {
+                background-color: #004a94;
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            }
+            .rounded-link-button:hover .rounded-link-button-icon {
+                display: block;
+            }
+
+            /* 클릭 효과 */
+            .rounded-link-button:active {
+                background-color: #003366;
+                box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+
+        <!-- MODAL TEMPLATE -->
+        <template id="template-modal-process">
+            <style>
+                #process-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+
+                    width: 80vw;
+                    height: 70vh;
+                }
+            </style>
+
+            <div id="process-body">
+                <div id="chart-process"></div>
+                <div id="chart-process-info">
+                    <p>Example</p>
+                </div>
+            </div>
+
+            <script>
+                const modalBodyContainer = document.querySelector("#chart-process");
+
+                (() => {
+                    const totalProcess = Object.keys(columnContent).reduce((column, key) => {
+                        return column + columnContent[key].process.length;
+                    }, 0);
+
+                    modalBodyContainer.style.display = 'grid'
+                    modalBodyContainer.style.gridTemplateColumns = `repeat(${totalProcess - 1}, 1fr) 1.24fr`;
+                    modalBodyContainer.style.gridTemplateRows = `0.4fr 0.5fr`;
+                    modalBodyContainer.style.gap = '0.6rem';
+                    modalBodyContainer.style.flex = 0.23;
+                })();
+
+                (() => {
+                    let categoryX = 1;
+                    let processX = 1;
+
+                    Object.keys(columnContent).forEach(key => {
+                        // CATEGORY HEADER SET
+                        if (!categoryTemp) {
+                            throw new Error('[Error] categoryTemp is not defined or invalid.');
+                        }
+
+                        const category = new ColumnHeader(`#chart-process`, categoryTemp);
+                        const row = extractItems(columnContent[key].process).length;
+
+                        category.setText(key);
+                        category.setGrid(categoryX, row);
+
+                        categoryX += row;
+
+                        // PROCESS HEADER SET
+                        extractItems(columnContent[key].process).forEach(object => {
+                            const process = new ArrowBox(`#chart-process`, processTemp);
+
+                            process.setText(object.name, "0.8rem");
+                            process.setGrid(processX, 2);
+                            process.setColor("var(--doosan-main-color)");
+
+                            processX += 1;
+                        });
+                    });
+                })();
+            </script>
+        </template>
+
+        <template id="template-modal-approval">
+
+        </template>
+
+        <template id="template-modal-progress">
+
+        </template>
+
+        <template id="template-modal-tool">
+
+        </template>
+
+        <template id="template-modal-guide">
+
+        </template>
+
+        <!-- UTIL FUNCTION -->
+        <script>
+            const extractItems = (data, filterFn = () => true) => {
+                if (Array.isArray(data)) {
+                    return data.filter(filterFn);
+                } else if (typeof data === "object") {
+                    return Object.values(data).filter(filterFn);
+                }
+                return [];
+            }
+        </script>
+
+        <script>
+            const categoryTemp = document.querySelector("#template-column-header");
+            const processTemp = document.querySelector("#template-arrow-box");
+            const approvalTemp = document.querySelector("#template-arrow-box");
+
+            (() => {
+                let categoryX = 2;
+                let processX = 2;
+                let approvalX = 2;
+
+                Object.keys(columnContent).forEach(key => {
+                    // CATEGORY HEADER SET
+                    const category = new ColumnHeader(`.${mainContainerClass}`, categoryTemp);
+                    const row = extractItems(columnContent[key].process).length;
+
+                    category.setText(key);
+                    category.setGrid(categoryX, row);
+
+                    categoryX += row;
+
+                    // PROCESS HEADER SET
+                    extractItems(columnContent[key].process).forEach(object => {
+                        const process = new ArrowBox(`.${mainContainerClass}`, processTemp);
+
+                        process.setText(object.name, "0.8rem");
+                        process.setGrid(processX, 2);
+                        process.setColor("var(--doosan-main-color)");
+
+                        processX += 1;
+                    });
+
+                    // APPROVAL HEADER SET
+                    const approvalTb = document.createElement("div");
+
+                    approvalTb.className = `approval-${key}-list approval-list`;
+                    approvalTb.style.gridColumn = `${approvalX} / ${row + approvalX}`;
+                    approvalTb.style.gridRow = "3 / 4";
+
+                    document.querySelector(`.${mainContainerClass}`).appendChild(approvalTb);
+
+                    extractItems(columnContent[key].approval).forEach(object => {
+                        const approval = new ArrowBox(`.approval-${key}-list`, approvalTemp);
+                        approval.setText(object.name, "0.6rem");
+                        approval.setColor("var(--doosan-main-color)");
+                    });
+
+                    approvalX += row;
+                });
+            })();
+        </script>
+
+        <!-- ROW HEADER SET -->
+        <script>
+            const sideBtnTemp = document.querySelector("#template-row-header");
+            let y = 1;
+
+            RowContent.forEach(row => {
+                const modalBtn = new RowBtn(`.${mainContainerClass}`, sideBtnTemp);
+
+                modalBtn.setText(row.name);
+                modalBtn.setGrid(y, row.order);
+                modalBtn.setModalEvent('template-modal-process');
+
+                y += row.order;
+            })
+        </script>
+    </body>
+</html>
