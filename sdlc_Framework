@@ -45,6 +45,12 @@
                 vertical-align: baseline;
                 box-sizing: border-box;
             }
+
+            .approval-list {
+                display: flex;
+                flex-direction: row;
+                gap: 0.2rem;
+            }
         </style>
 
         <!-- DATA INPUT -->
@@ -257,7 +263,70 @@
                 { name : "절차", order : 1},
                 { name : "도구", order : 1},
                 { name : "가이드", order : 1}
-            ];       
+            ];
+
+            const SDLCData = {
+                "progress" : [
+                    { name : "VRB", category : "sales", order : 1, link : "example.com" },
+                    { name : "CRB", category : "sales", order : 2, link : "example.com" },
+                    { name : "PRB", category : "dev", order : 1, link : "example.com" },
+                    {
+                        name : "관리 표준",
+                        category : "dev",
+                        order : 1,
+                        child : [
+                            { name : "계획", order : 1, link : "example.com" },
+                            { name : "통제", order : 2, link : "example.com" },
+                            { name : "종료", order : 3, link : "example.com" }
+                        ],
+                        child1 : [
+                            { name : "위험 관리", order : 1, link : "example.com" }
+                        ]
+                    },
+                    {
+                        name : "운영 관리",
+                        category : "ops",
+                        order : 1,
+                        child : [
+                            { name : "인시던트 관리", order : 1, link : "example.com" },
+                            { name : "문제 관리", order : 1, link : "example.com" },
+                            { name : "변경 관리", order : 1, link : "example.com" },
+                            { name : "릴리스 관리", order : 1, link : "example.com" },
+                            { name : "구성 관리", order : 1, link : "example.com" },
+                            { name : "장애 관리", order : 1, link : "example.com" },
+                            { name : "가용성 관리", order : 1, link : "example.com" },
+                            { name : "용량 관리", order : 1, link : "example.com" },
+                            { name : "연속성 관리", order : 1, link : "example.com" },
+                        ]
+                    }
+                ],
+                "tools" : [
+                    {
+                        name : "DevOps 도구",
+                        category : ["sales", "dev"],
+                        order : 1,
+                        child : [
+                            { name : "jira", order : 1, link : "example.com" },
+                            { name : "confluence", order : 1, link : "example.com" },
+                            { name : "gitlab", order : 1, link : "example.com" },
+                            { name : "codeInsight", order : 1, link : "example.com" },
+                            { name : "Whatap", order : 1, link : "example.com" },
+                            { name : "n8n", order : 1, link : "example.com" },
+                            { name : "o365", order : 1, link : "example.com" },
+                        ]
+                    }
+                ],
+                "guide" : [
+                    {
+                        name : "프로젝트 수행 가이드",
+                        category : "dev",
+                        order : 1,
+                        child : [
+                            { name : "선투입", order : 1, link : "example.com" }
+                        ]
+                    }
+                ]
+            }
         </script>
 
         <!-- PAGE SETTING CODE -->
@@ -327,6 +396,7 @@
                  * @throws {Error} 템플릿이 유효하지 않을 경우 에러를 발생시킵니다.
                  */
                 initComponent(target, template) {
+                    //template 변경
                     this.target = target.toLowerCase() === "body"
                         ? document.body
                         : document.querySelector(target);
@@ -438,6 +508,7 @@
                  * modal.setBody('content-template-id');
                  */
                  setBody(templateId) {
+                    //templateID -> template ( document.queselect )
                     let bodyTemplate = document.getElementById(templateId);
                     if (!bodyTemplate) {
                         throw new Error(`[Modal Error] Template with ID "${templateId}" not found.`);
@@ -982,17 +1053,98 @@
                 #process-body {
                     display: flex;
                     flex-direction: column;
-                    gap: 0.3rem;
+                    gap: 0.6rem;
+
+                    padding: 0 0.6rem;
 
                     width: 80vw;
                     height: 70vh;
+
+                    overflow: scroll;
+                }
+
+                /* #chart-process 스타일 */
+                #chart-process {
+                    padding: 0.3rem;
+                    width: 100%;
+                }
+
+                #chart-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.8rem;
+                }
+
+                /* 전체 테이블 스타일 */
+                #chart-info table {                    
+                    width: 100%;
+
+                    font-size: 1rem;
+                    font-family: 'Arial', sans-serif;
+
+                    background-color: #ffffff;
+
+                    border-radius: 0.3rem;
+                    border-collapse: collapse;
+
+                    overflow: hidden;
+                }
+
+                /* 테이블 헤더 스타일 */
+                #chart-info thead {
+                    background-color: #f9fafb;
+                }
+
+                #chart-info th {
+                    padding: 0.4rem;
+
+                    text-align: center;
+                    font-weight: 600;
+                    color: #333333;
+
+                    border: 1px solid #e0e0e0;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+
+                /* 테이블 본문 스타일 */
+                #chart-info tr {
+                    border-bottom: 1px solid #e5e7eb;
+                }
+
+                #chart-info tr:last-child {
+                    border-bottom: none;
+                }
+
+                #chart-info td {
+                    padding: 0.3rem 1rem;
+
+                    color: #555555;
+                    border: 1px solid #e0e0e0;
                 }
             </style>
 
             <div id="process-body">
                 <div id="chart-process"></div>
-                <div id="chart-process-info">
-                    <p>Example</p>
+                <div id="chart-info">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>단계</th>
+                                <th>설명</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chart-category-info-table"></tbody>
+                    </table>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>단계</th>
+                                <th>설명</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chart-process-info-table"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1008,7 +1160,7 @@
                     modalBodyContainer.style.gridTemplateColumns = `repeat(${totalProcess - 1}, 1fr) 1.24fr`;
                     modalBodyContainer.style.gridTemplateRows = `0.4fr 0.5fr`;
                     modalBodyContainer.style.gap = '0.6rem';
-                    modalBodyContainer.style.flex = 0.23;
+                    modalBodyContainer.style.height = "7rem";
                 })();
 
                 (() => {
@@ -1039,6 +1191,44 @@
 
                             processX += 1;
                         });
+                    });
+                })();
+
+                (() => {
+                    const tbody = document.querySelector("#chart-category-info-table");
+
+                    Object.keys(columnContent).forEach(key => {
+                        const tr = document.createElement("tr");
+                        const category_td = document.createElement("td");
+                        const categoryInfo_td = document.createElement("td");
+
+                        category_td.innerText = key;
+                        categoryInfo_td.innerText = columnContent[key].description;
+
+                        tr.appendChild(category_td);
+                        tr.appendChild(categoryInfo_td);
+
+                        tbody.appendChild(tr);
+                    });
+                })();
+
+                (() => {
+                    const tbody = document.querySelector("#chart-process-info-table");
+
+                    Object.keys(columnContent).forEach(key => {
+                        columnContent[key].process.forEach(object => {
+                            const tr = document.createElement("tr");
+                            const process_td = document.createElement("td");
+                            const processInfo_td = document.createElement("td");
+
+                            process_td.innerText = object.name;
+                            processInfo_td.innerText = object.description;
+
+                            tr.appendChild(process_td);
+                            tr.appendChild(processInfo_td);
+
+                            tbody.appendChild(tr);
+                        })
                     });
                 })();
             </script>
