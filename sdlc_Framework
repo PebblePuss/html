@@ -17,657 +17,541 @@
                 --doosan-main-color-lt2 : #3A78D1;
                 --doosan-main-color-lt3 : #2A63AD;
 
+                /* 기존 White, Gray, Black 계열 */
                 --white-color           : #f1f1f1;
                 --gray-color            : #d9d9d9;
                 --gray-color-dark       : #a6a6a6;
                 --black-color           : #333333;
                 --black-color-dark      : #1a1a1a;
 
+                /* 추가된 Gray 계열 */
+                --gray-color-light      : #e6e6e6; /* 밝은 회색 */
+                --gray-color-medium     : #bfbfbf; /* 중간 회색 */
+                --gray-color-deep       : #8c8c8c; /* 더 어두운 회색 */
+
+                /* 추가된 Black 계열 */
+                --black-color-light     : #4d4d4d; /* 밝은 검정 */
+                --black-color-medium    : #262626; /* 중간 검정 */
+                --black-color-deep      : #0d0d0d; /* 더 어두운 검정 */
+
+                /* 기존 Beige 계열 */
                 --beige-color           : #CEC495;
                 --beige-color-light     : #E3DDB8;
                 --beige-color-dark      : #A89F73;
 
-                --approval-doobuy-color : #FAA300;
-                --hover-doobuy-color    : #FFC14D;
-                --approval-doobm-color  : #D85F5F;
-                --hover-doobm-color     : #FF8080;
-                --approval-epms-color   : #007F5F;
-                --hover-epms-color      : #00A27F;
-                --approval-sn-color     : #3965C5;
-                --hover-sn-color        : #5A85E7;
+                /* 추가된 Beige 계열 */
+                --beige-color-medium    : #b8aa7a; /* 중간 베이지 */
+                --beige-color-deep      : #8f835e; /* 더 어두운 베이지 */
+                --beige-color-muted     : #d6cfa0; /* 부드러운 베이지 */
+
+                /* 조정된 Approval ~ SN 색상 */
+                --approval-doobuy-color : #e69500; /* 기존 #FAA300에서 조금 더 진하게 */
+                --hover-doobuy-color    : #ffb732; /* 기존 #FFC14D에서 조금 더 진하게 */
+                --approval-doobm-color  : #c25555; /* 기존 #D85F5F에서 조금 더 진하게 */
+                --hover-doobm-color     : #e66b6b; /* 기존 #FF8080에서 조금 더 진하게 */
+                --approval-epms-color   : #006b4f; /* 기존 #007F5F에서 조금 더 진하게 */
+                --hover-epms-color      : #00956b; /* 기존 #00A27F에서 조금 더 진하게 */
+                --approval-sn-color     : #2f54a3; /* 기존 #3965C5에서 조금 더 진하게 */
+                --hover-sn-color        : #4a73c4; /* 기존 #5A85E7에서 조금 더 진하게 */
             }
 
             .sdlc-framework-container * {
                 margin: 0;
                 padding: 0;
+
                 border: 0;
                 font-size: 100%;
+                
                 vertical-align: baseline;
                 box-sizing: border-box;
+
+                white-space: wrap;
+                word-break: keep-all;
             }
 
-            .approval-list {
-                display: flex;
-                flex-direction: row;
-                gap: 0.2rem;
+            #sdlc-legend-list {
+                font-family: 'Nanum Gothic', sans-serif;
+            }
+            
+            #sdlc-framework-container {
+                padding: 0.8rem 1.3rem;
+
+                font-family: 'Nanum Gothic', sans-serif;
             }
         </style>
 
+        <div id="content"></div>
+
         <!-- DATA INPUT -->
         <script>
-            const legend = {
+            const systemLegend = {
                 doobuy: {
                     name: "DooBuy",
-                    fullName: "두산 구매 시스템",
-                    color: "#4E71FF",
+                    description: "두산 구매 시스템",
+                    color: "var(--approval-doobuy-color)",
                     icon: "fa-solid fa-credit-card"
                 },
                 doobm: {
                     name: "DooBM",
-                    fullName: "두산 업무 관리 시스템",
-                    color: "#5409DA",
+                    description: "두산 업무 관리 시스템",
+                    color: "var(--approval-doobm-color)",
                     icon: "fa-solid fa-file"
                 },
                 epms: {
                     name: "EPMS",
-                    fullName: "프로젝트 관리 시스템",
-                    color: "#FF6B35",
+                    description: "프로젝트 관리 시스템",
+                    color: "var(--approval-epms-color)",
                     icon: "fa-solid fa-diagram-project"
                 },
                 servicenavigator: {
-                    name: "Service Navigator",
-                    fullName: "서비스 관리 시스템",
-                    color: "#28A745",
+                    name: "ServiceNavigator",
+                    description: "서비스 관리 시스템",
+                    color: "var(--approval-sn-color)",
                     icon: "fa-solid fa-screwdriver-wrench"
                 }
             };
 
-            const columnContent = {
-                sales: {
-                    id: "sdlc-header-category-sales",
-                    name: "Sales",
-                    description: "영업 및 사업 검토 단계",
-                    order: 1,
-                    process: [
-                        {
-                            name: "사업검토",
-                            description: "사업 타당성 및 수익성 검토"
-                        }
-                    ],
-                    approval: [
-                        {
-                            name: "견적 요청",
-                            site: "doobuy",
-                            description: "외부 업체 견적 요청 및 검토",
-                            required: {
-                                value: true,
-                                condition: "외부 견적 필요 시"
+            const sdlcStructure = {
+                rows : [
+                    { name : "진행", id: "process", span : 2},
+                    { name : "품의", id: "approval", span : 1},
+                    { name : "절차", id: "progress", span : 1},
+                    { name : "도구", id: "tools", span : 1},
+                    { name : "가이드", id: "guides", span : 1}
+                ],
+                columns : {
+                    sales: {
+                        name: "Sales",
+                        description: "영업 및 사업 검토 단계",
+                        process: [
+                            {
+                                name: "사업검토",
+                                description: "사업 타당성 및 수익성 검토"
                             }
-                        },
-                        {
-                            name: "수주 품의",
-                            site: "doobm",
-                            description: "수주 승인을 위한 품의서 작성 및 결재",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "구매 요청",
-                            site: "doobuy",
-                            description: "필요 자원 및 장비 구매 요청",
-                            required: {
-                                value: true,
-                                condition: "외부 구매 필요 시"
-                            }
-                        }
-                    ]
-                },
-                dev: {
-                    id: "sdlc-header-category-dev",
-                    name: "Dev (프로젝트)",
-                    description: "개발 프로젝트 수행 단계",
-                    order: 2,
-                    process: [
-                        {
-                            name: "분석",
-                            description: "요구사항 분석 및 정의"
-                        },
-                        {
-                            name: "설계/개발",
-                            description: "시스템 설계 및 개발 수행"
-                        },
-                        {
-                            name: "테스트",
-                            description: "단위/통합/시스템 테스트"
-                        },
-                        {
-                            name: "오픈/안정화",
-                            description: "시스템 오픈 및 안정화"
-                        }
-                    ],
-                    approval: [
-                        {
-                            name: "사업수행 계획보고",
-                            site: "epms",
-                            description: "프로젝트 수행 계획 및 일정 보고",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "계약변경 품의",
-                            site: "doobm",
-                            description: "계약 조건 변경 시 품의",
-                            required: {
-                                value: false,
-                                condition: "계약 변경 시"
-                            }
-                        },
-                        {
-                            name: "프로젝트 계획/원가 변경품의",
-                            site: "epms",
-                            description: "프로젝트 계획 또는 원가 변경 품의",
-                            required: {
-                                value: false,
-                                condition: "계획/원가 변경 시"
-                            }
-                        },
-                        {
-                            name: "청구요청 품의",
-                            site: "doobm",
-                            description: "고객 청구 요청 품의",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "지급요청 품의",
-                            site: "doobuy",
-                            description: "외부 업체 지급 요청 품의",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "보안성 검토",
-                            site: "epms",
-                            description: "시스템 보안성 검토 및 승인",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "완료보고",
-                            site: "epms",
-                            description: "프로젝트 완료 보고서 작성 및 제출",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        }
-                    ]
-                },
-                ops: {
-                    id: "sdlc-header-category-ops",
-                    name: "Ops (운영)",
-                    description: "시스템 운영 및 유지보수 단계",
-                    order: 3,
-                    process: [
-                        {
-                            name: "운영/유지보수",
-                            description: "시스템 운영 및 지속적 유지보수"
-                        }
-                    ],
-                    approval: [
-                        {
-                            name: "장애훈련 계획/실적 보고",
-                            site: "servicenavigator",
-                            description: "장애 대응 훈련 계획 수립 및 실적 보고",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "IT서비스 결과보고",
-                            site: "servicenavigator",
-                            description: "IT 서비스 운영 결과 정기 보고",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        },
-                        {
-                            name: "장애조치 결과보고",
-                            site: "servicenavigator",
-                            description: "시스템 장애 발생 시 조치 결과 보고",
-                            required: {
-                                value: true,
-                                condition: null
-                            }
-                        }
-                    ]
-                }
-            };
-
-            
-            const RowContent = [
-                { name : "진행", order : 2},
-                { name : "품의", order : 1},
-                { name : "절차", order : 1},
-                { name : "도구", order : 1},
-                { name : "가이드", order : 1}
-            ];
-
-            const SDLCData = {
-                "progress" : [
-                    { name : "VRB", category : "sales", order : 1, link : "example.com" },
-                    { name : "CRB", category : "sales", order : 2, link : "example.com" },
-                    { name : "PRB", category : "dev", order : 1, link : "example.com" },
-                    {
-                        name : "관리 표준",
-                        category : "dev",
-                        order : 1,
-                        child : [
-                            { name : "계획", order : 1, link : "example.com" },
-                            { name : "통제", order : 2, link : "example.com" },
-                            { name : "종료", order : 3, link : "example.com" }
                         ],
-                        child1 : [
-                            { name : "위험 관리", order : 1, link : "example.com" }
+                        get span() {
+                            return this.process.length;
+                        },
+                        approval: [
+                            {
+                                name: "견적 요청",
+                                systemLegend: systemLegend.doobuy,
+                                description: "외부 업체 견적 요청 및 검토",
+                                required: "외부 견적 필요 시"
+                            },
+                            {
+                                name: "수주 품의",
+                                systemLegend: systemLegend.doobm,
+                                description: "수주 승인을 위한 품의서 작성 및 결재",
+                                required: true
+                            },
+                            {
+                                name: "구매 요청",
+                                systemLegend: systemLegend.doobuy,
+                                description: "필요 자원 및 장비 구매 요청",
+                                required: "외부 구매 필요 시"
+                            }
                         ]
                     },
-                    {
-                        name : "운영 관리",
-                        category : "ops",
-                        order : 1,
-                        child : [
-                            { name : "인시던트 관리", order : 1, link : "example.com" },
-                            { name : "문제 관리", order : 1, link : "example.com" },
-                            { name : "변경 관리", order : 1, link : "example.com" },
-                            { name : "릴리스 관리", order : 1, link : "example.com" },
-                            { name : "구성 관리", order : 1, link : "example.com" },
-                            { name : "장애 관리", order : 1, link : "example.com" },
-                            { name : "가용성 관리", order : 1, link : "example.com" },
-                            { name : "용량 관리", order : 1, link : "example.com" },
-                            { name : "연속성 관리", order : 1, link : "example.com" },
+                    dev: {
+                        name: "Dev (프로젝트)",
+                        description: "개발 프로젝트 수행 단계",
+                        process: [
+                            {
+                                name: "분석",
+                                description: "요구사항 분석 및 정의"
+                            },
+                            {
+                                name: "설계/개발",
+                                description: "시스템 설계 및 개발 수행"
+                            },
+                            {
+                                name: "테스트",
+                                description: "단위/통합/시스템 테스트"
+                            },
+                            {
+                                name: "오픈/안정화",
+                                description: "시스템 오픈 및 안정화"
+                            }
+                        ],
+                        get span() {
+                            return this.process.length;
+                        },
+                        approval: [
+                            {
+                                name: "사업수행 계획보고",
+                                systemLegend: systemLegend.epms,
+                                description: "프로젝트 수행 계획 및 일정 보고",
+                                required: true
+                            },
+                            {
+                                name: "계약변경 품의",
+                                systemLegend: systemLegend.epms,
+                                description: "계약 조건 변경 시 품의"
+                            },
+                            {
+                                name: "프로젝트 계획/원가 변경품의",
+                                systemLegend: systemLegend.epms,
+                                description: "프로젝트 계획 또는 원가 변경 품의"
+                            },
+                            {
+                                name: "청구요청 품의",
+                                systemLegend: systemLegend.doobm,
+                                description: "고객 청구 요청 품의",
+                                required: true
+                            },
+                            {
+                                name: "지급요청 품의",
+                                systemLegend: systemLegend.doobuy,
+                                description: "외부 업체 지급 요청 품의",
+                                required: true
+                            },
+                            {
+                                name: "보안성 검토",
+                                systemLegend: systemLegend.epms,
+                                description: "시스템 보안성 검토 및 승인",
+                                required: true
+                            },
+                            {
+                                name: "완료보고",
+                                systemLegend: systemLegend.epms,
+                                description: "프로젝트 완료 보고서 작성 및 제출",
+                                required: true
+                            }
+                        ]
+                    },
+                    ops: {
+                        name: "Ops (운영)",
+                        description: "시스템 운영 및 유지보수 단계",
+                        process: [
+                            {
+                                name: "운영/유지보수",
+                                description: "시스템 운영 및 지속적 유지보수"
+                            }
+                        ],
+                        get span() {
+                            return this.process.length;
+                        },
+                        approval: [
+                            {
+                                name: "장애훈련 계획/실적 보고",
+                                systemLegend: systemLegend.servicenavigator,
+                                description: "장애 대응 훈련 계획 수립 및 실적 보고",
+                                required: true
+                            },
+                            {
+                                name: "IT서비스 결과보고",
+                                systemLegend: systemLegend.servicenavigator,
+                                description: "IT 서비스 운영 결과 정기 보고",
+                                required: true
+                            },
+                            {
+                                name: "장애조치 결과보고",
+                                systemLegend: systemLegend.servicenavigator,
+                                description: "시스템 장애 발생 시 조치 결과 보고",
+                                required: true
+                            }
                         ]
                     }
-                ],
-                "tools" : [
-                    {
-                        name : "DevOps 도구",
-                        category : ["sales", "dev"],
-                        order : 1,
-                        child : [
-                            { name : "jira", order : 1, link : "example.com" },
-                            { name : "confluence", order : 1, link : "example.com" },
-                            { name : "gitlab", order : 1, link : "example.com" },
-                            { name : "codeInsight", order : 1, link : "example.com" },
-                            { name : "Whatap", order : 1, link : "example.com" },
-                            { name : "n8n", order : 1, link : "example.com" },
-                            { name : "o365", order : 1, link : "example.com" },
-                        ]
-                    }
-                ],
-                "guide" : [
-                    {
-                        name : "프로젝트 수행 가이드",
-                        category : "dev",
-                        order : 1,
-                        child : [
-                            { name : "선투입", order : 1, link : "example.com" }
-                        ]
-                    }
-                ]
-            }
+                }
+            };
         </script>
 
-        <!-- PAGE SETTING CODE -->
+        <style>
+            .sdlc-legend-btn {
+                padding: 0.53rem;
+
+                background-color: var(--doosan-main-color);
+                color: var(--white-color);
+
+                border-radius: 0.4rem;
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+        </style>
+
         <script>
-            const mainContainerClass = 'sdlc-framework-container';
-            const mainTmpContainer = document.createElement('div');
-
-            mainTmpContainer.className = mainContainerClass;
-            const totalContentRow = 4;
-
+            const containerID = 'sdlc-framework-container';
             (() => {
-                let totalProcess = Object.keys(columnContent).reduce((column, key) => {
-                    return column + columnContent[key].process.length;
-                }, 0);
+                const wordPressContent = document.getElementById("content");
+                const sdlcLegendList = document.createElement("div");
 
-                mainTmpContainer.style.display = 'grid'
-                mainTmpContainer.style.gridTemplateColumns = `0.4fr repeat(${totalProcess - 1}, 1fr) 1.24fr`;
-                mainTmpContainer.style.gridTemplateRows = `0.4fr 0.5fr 0.6fr repeat(${totalContentRow}, 1fr)`;
-                mainTmpContainer.style.gap = '0.6rem';
+                wordPressContent.style.display = "flex";
+                wordPressContent.style.flexDirection = "column";
+                wordPressContent.style.gap = "0.6rem";
+
+                sdlcLegendList.id = "sdlc-legend-list";
+                sdlcLegendList.style.display = "flex";
+                sdlcLegendList.style.flexDirection = "row";
+                sdlcLegendList.style.gap = "0.6rem";
+                sdlcLegendList.style.padding = "0 1.3rem";
+                sdlcLegendList.style.justifyContent = "flex-end";
+
+                Object.keys(systemLegend).forEach(key => {
+                    const sdlcLegend = document.createElement("div");
+
+                    sdlcLegend.id = `sdlc-legend-${systemLegend[key].name}`;
+                    sdlcLegend.className = `sdlc-legend-btn`;
+                    sdlcLegend.innerText = systemLegend[key].name;
+                    sdlcLegend.style.backgroundColor = systemLegend[key].color;
+                    sdlcLegend.style.cursor = "pointer";
+
+                    // Mouseover 이벤트 추가
+                    sdlcLegend.addEventListener("mouseover", () => {
+                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name}`);
+                        
+                        // NodeList의 각 요소에 스타일 적용
+                        approvalList.forEach(approval => {
+                            approval.style.fontWeight = 'bold'; // 텍스트를 굵게
+                            approval.style.transform = 'scale(1.07)'; // 약간 확대 효과
+                            approval.style.transition = 'all 0.3s ease'; // 부드러운 전환 효과
+                        });
+                    });
+
+                    // Mouseout 이벤트 추가 (강조 효과 제거)
+                    sdlcLegend.addEventListener("mouseout", () => {
+                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name}`);
+                        
+                        // NodeList의 각 요소에 스타일 초기화
+                        approvalList.forEach(approval => {
+                            approval.style.fontWeight = ''; // 원래 굵기로 복원
+                            approval.style.transform = ''; // 원래 크기로 복원
+                            approval.style.transition = ''; // 원래 전환 효과로 복원
+                        });
+                    });
+
+                    sdlcLegendList.appendChild(sdlcLegend);
+                });
+
+                wordPressContent.appendChild(sdlcLegendList);
             })();
 
-            document.body.appendChild(mainTmpContainer);
-        </script>
+            (() => {
+                const container = document.createElement('div');
+                const categoryFR = "0.2fr";
+                const processFR = "0.34fr";
+                const approvalFR = "0.4fr";
+                const rowHeaderFR = "0.6fr";
 
-        <!-- MODAL PAGE TEMPLATE -->
-        <template></template>
+                container.id = containerID
+                container.className = containerID
 
-        <!-- CORE COMPONENT-->
-        <script>
-            /**
-             * @class Component
-             * @description
-             * DOM 요소와 템플릿을 기반으로 컴포넌트를 생성하고 관리하는 클래스.
-             * 이 클래스는 특정 DOM 요소에 템플릿을 렌더링하고, 이벤트를 설정하거나
-             * 컴포넌트를 제거하는 기능을 제공합니다.
-             *
-             * @example
-             * // HTML 템플릿 요소를 기반으로 컴포넌트 생성
-             * const template = document.getElementById('my-template');
-             * const component = new Component('#app', template);
-             *
-             * @param {string} $target - 컴포넌트를 렌더링할 대상 DOM 선택자 (예: '#app', 'body').
-             * @param {HTMLTemplateElement} $template - 컴포넌트의 템플릿 요소.
-             */
+                const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
+                    return total + (sdlcStructure.columns[key].span || 0);
+                }, 0);
+
+                const totalDataRows = 3;
+
+                container.style.display = 'grid'
+                container.style.gridTemplateColumns = `${rowHeaderFR} 1.3fr repeat(${totalProcess - 2}, 1fr) 1.88fr`;
+                container.style.gridTemplateRows = `${categoryFR} ${processFR} ${approvalFR} repeat(${totalDataRows}, 0.5fr) `;
+                container.style.gap = '0.6rem';
+
+                document.querySelector("#content").appendChild(container);
+            })();
+
             class Component {
-                /**
-                 * @constructor
-                 * @description
-                 * 생성자에서 `initComponent` 메서드를 호출하여 컴포넌트를 초기화합니다.
-                 *
-                 * @param {string} $target - 컴포넌트를 렌더링할 대상 DOM 선택자.
-                 * @param {HTMLTemplateElement} $template - 컴포넌트의 템플릿 요소.
-                 */
-                constructor($target, $template) {
-                    this.initComponent($target, $template);
+                constructor(target, template) {
+                    this.init(target, template);
+                    this.render();
                 }
 
-                /**
-                 * @method initComponent
-                 * @description
-                 * 대상 DOM 요소와 템플릿을 초기화하고, 템플릿을 DOM에 렌더링합니다.
-                 * 대상 요소가 존재하지 않거나 템플릿이 유효하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @param {string} target - 컴포넌트를 렌더링할 대상 DOM 선택자.
-                 * @param {HTMLTemplateElement} template - 컴포넌트의 템플릿 요소.
-                 * @throws {Error} 대상 DOM 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 * @throws {Error} 템플릿이 유효하지 않을 경우 에러를 발생시킵니다.
-                 */
-                initComponent(target, template) {
-                    //template 변경
-                    this.target = target.toLowerCase() === "body"
+                init(target, template) {
+                    this.container = target.toLowerCase() === "body"
                         ? document.body
                         : document.querySelector(target);
-
-                    if (!this.target) {
-                        throw new Error(`[Component Error] Target element "${target}" not found in the DOM.`);
-                    }
-
-                    this.template = template?.content?.cloneNode(true);
-
-                    if (!this.template) {
-                        throw new Error(`[Component Error] Template "${template?.id || 'unknown'}" is invalid or not found.`);
-                    }
-
+                        
+                    this.template = document.querySelector(template)?.content?.cloneNode(true);
                     this.element = this.template.firstElementChild;
-                    this.target.appendChild(this.template);
+                }
 
+                setEvent() {}
+
+                render() {
+                    this.container.appendChild(this.template);
                     this.setEvent();
                 }
 
-                /**
-                 * @method setEvent
-                 * @description
-                 * 이벤트를 설정하는 메서드. 기본적으로 빈 메서드로 정의되어 있으며,
-                 * 하위 클래스에서 오버라이드하여 사용합니다.
-                 *
-                 * @example
-                 * class MyComponent extends Component {
-                 *     setEvent() {
-                 *         this.element.addEventListener('click', () => {
-                 *             console.log('Element clicked!');
-                 *         });
-                 *     }
-                 * }
-                 */
-                setEvent() {}
-
-                /**
-                 * @method destroy
-                 * @description
-                 * 컴포넌트를 DOM에서 제거합니다. `this.element`가 존재할 경우 해당 요소를 삭제합니다.
-                 *
-                 * @example
-                 * const component = new Component('#app', template);
-                 * component.destroy(); // 컴포넌트를 DOM에서 제거
-                 */
                 destroy() {
-                    if (this.element) {
-                        this.element.remove();
+                    this.element?.remove();
+                }
+
+                findElement(selector, errorMessage) {
+                    const element = this.element.querySelector(selector);
+                    if (!element) {
+                        throw new Error(errorMessage);
                     }
+                    return element;
                 }
             }
         </script>
 
-        <!-- TEMPLATE COMPONENT -->
-
-        <!-- Modal Component -->
-        <script>
-            /**
-             * @class Modal
-             * @extends Component
-             * @description
-             * 모달 컴포넌트를 생성하고 관리하는 클래스.
-             * 모달 닫기, 오버레이 클릭, 모달 본문 설정 등의 기능을 제공합니다.
-             *
-             * @example
-             * const modalTemplate = document.getElementById('modal-template');
-             * const modal = new Modal('#app', modalTemplate);
-             * modal.setBody('content-template-id');
-             */
-            class Modal extends Component {
-                /**
-                 * @method setEvent
-                 * @description
-                 * 모달의 이벤트를 설정합니다. 닫기 버튼 클릭, 오버레이 클릭, 모달 내부 클릭 이벤트를 처리합니다.
-                 *
-                 * @example
-                 * const modal = new Modal('#app', modalTemplate);
-                 * modal.setEvent();
-                 */
-                setEvent() {
-                    let closeButton = this.element.querySelector('.close-btn');
-                    if (closeButton) {
-                        closeButton.addEventListener('click', () => this.destroy());
-                    } else {
-                        console.warn('[Modal Warning] Close button (.closeBtn) not found.');
-                    }
-
-                    let modalOverlay = this.element;
-                    modalOverlay.addEventListener('click', () => this.destroy());
-
-                    let modalContent = this.element.querySelector('.modal-content');
-                    if (modalContent) {
-                        modalContent.addEventListener('click', (event) => event.stopPropagation());
-                    } else {
-                        console.warn('[Modal Warning] Modal content (.modal) not found.');
-                    }
-                }
-
-                /**
-                 * @method setBody
-                 * @description
-                 * 모달의 본문 내용을 설정합니다. 지정된 템플릿 ID를 기반으로 본문 내용을 추가합니다.
-                 *
-                 * @param {string} templateId - 본문 내용을 설정할 템플릿의 ID.
-                 * @throws {Error} 템플릿 ID가 유효하지 않거나 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * modal.setBody('content-template-id');
-                 */
-                 setBody(templateId) {
-                    //templateID -> template ( document.queselect )
-                    let bodyTemplate = document.getElementById(templateId);
-                    if (!bodyTemplate) {
-                        throw new Error(`[Modal Error] Template with ID "${templateId}" not found.`);
-                    }
-
-                    if (!bodyTemplate.content || !bodyTemplate.content.firstElementChild) {
-                        throw new Error(`[Modal Error] Template with ID "${templateId}" is empty or invalid.`);
-                    }
-
-                    let clonedContent = bodyTemplate.content.cloneNode(true);
-
-                    let modalBody = this.element.querySelector('.modal-body');
-                    if (!modalBody) {
-                        throw new Error('[Modal Error] Modal body (.modal-body) not found.');
-                    }
-
-                    modalBody.innerHTML = '';
-                    modalBody.appendChild(clonedContent);
-                }
-            }
-        </script>
-
-        <template id="modal-template">
+        <template id="template-modal">
             <div class="modal-overlay">
-                <div class="modal-content">
+                <div class="modal">
                     <div class="modal-header">
                         <i class="fa-solid fa-xmark close-btn"></i>
                     </div>
                     <div class="modal-body"></div>
                 </div>
             </div>
+
+            <style>
+                .modal-overlay {
+                    display: flex;
+                    position: fixed;
+
+                    top: 0;
+                    left: 0;
+
+                    width: 100vw;
+                    height: 100vh;
+
+                    justify-content: center;
+                    align-items: center;
+
+                    background-color: rgba(0,0,0,0.7);
+                    z-index: 1000;
+                }
+
+                .modal {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+
+                    padding: 1.8rem 1.3rem;
+
+                    min-width: 78%;
+                    max-height: 75%; /* 최대 높이 설정 */
+                    overflow-y: auto; /* 높이를 초과할 경우 스크롤 추가 */
+
+                    background-color: var(--white-color);
+
+                    border-radius: 1rem;
+                    box-shadow: 0 0.6rem 0.8rem rgba(0,0,0,0.1);
+
+                    overflow: hidden; /* 기본적으로 숨김 */
+                }
+
+                .modal-body {
+                    overflow-y: auto; /* 높이를 초과할 경우 스크롤 추가 */
+                    max-height: calc(75% - 2rem); /* 모달의 최대 높이에 맞게 조정 */
+                    padding-right: 0.5rem; /* 스크롤바와 콘텐츠 간 여백 */
+                    font-size: 2rem;
+                    color: var(--black-color);
+                }
+
+                .modal-header {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+
+                .close-btn {
+                    font-size: 2rem;
+                    color: var(--black-color);
+
+                    cursor: pointer;
+                }
+            </style>
         </template>
 
-        <style>
-            .modal-overlay {
-                display: flex;
-                position: fixed;
-
-                top: 0;
-                left: 0;
-
-                width: 100vw;
-                height: 100vh;
-
-                justify-content: center;
-                align-items: center;
-
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
-            }
-    
-            .modal-content {
-                display: flex;
-                flex-direction: column;
-                gap: 0.6rem;
-
-                padding: 1rem;
-
-                max-width: 90%;
-                max-height: 80%;
-
-                background-color: #fff;
-                
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                
-                overflow: hidden;
-            }
-    
-            .modal-header {
-                display: flex;
-
-                justify-content: flex-end;
-            }
-    
-            .close-btn {
-                font-size: 20px;
-                color: #333;
-
-                cursor: pointer;
-            }
-    
-            .modal-body {
-                font-size: 16px;
-                color: #333;
-            }
-        </style>
-
-        <!-- Row Header Btn Component -->
         <script>
-            /**
-             * @class RowBtn
-             * @extends Component
-             * @description
-             * 행 버튼(Row Button) 컴포넌트를 생성하고 관리하는 클래스.
-             * 텍스트를 설정하거나, 추가적인 기능을 확장하여 사용할 수 있습니다.
-             *
-             * @example
-             * // 템플릿을 기반으로 RowBtn 컴포넌트 생성
-             * const rowTemplate = document.getElementById('template-row-header');
-             * const rowBtn = new RowBtn('#app', rowTemplate);
-             * rowBtn.setText('Example Text');
-             */
-            class RowBtn extends Component {
-                /**
-                 * @method setText
-                 * @description
-                 * 행 버튼의 텍스트를 설정합니다. `.row-header-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
-                 *
-                 * @param {string} text - 설정할 텍스트 값.
-                 * @throws {Error} `.row-header-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * const rowBtn = new RowBtn('#app', rowTemplate);
-                 * rowBtn.setText('New Button Text');
-                 */
-                setText(text) {
-                    let rowHeaderText = this.element.querySelector(".row-header-text");
-                    if (!rowHeaderText) {
-                        console.error('[RowBtn Error] .row-header-text element not found.');
-                        return;
+            class Modal extends Component {
+                constructor(target, template = "#template-modal") {
+                    super(target, template);
+                }
+
+                setEvent() {
+                    try {
+                        // Close Button 설정
+                        this.closeBtn = this.findElement(
+                            ".close-btn",
+                            "[Modal Warning] Close Button is not exist."
+                        );
+                        this.closeBtn.addEventListener("click", () => this.destroy());
+
+                        // Modal Overlay 설정
+                        this.modalOverlay = this.element;
+                        this.modalOverlay.addEventListener("click", () => this.destroy());
+
+                        // Modal Content 설정
+                        this.modalContent = this.findElement(
+                            ".modal",
+                            "[Modal Warning] Modal Content is not exist."
+                        );
+                        this.modalContent.addEventListener("click", (e) => e.stopPropagation());
+                    } catch (error) {
+                        console.error(error.message);
                     }
-                    rowHeaderText.textContent = text;
                 }
 
-                setGrid(y, row) {
-                    this.element.style.gridColumn = '1 / 2'
-                    this.element.style.gridRow = `${y} / ${y + row}`;
-                }
-
-                setModalEvent(template) {
-                    this.element.addEventListener('click', () => {
-                        let modalTemp = document.getElementById('modal-template');
-                        if (!modalTemp) {
-                            console.error('[Modal Error] Modal template with ID "modal-template" not found.');
-                            return;
+                setBody(templateId) {
+                    try {
+                        const template = document.querySelector(templateId);
+                        if (!template) {
+                            throw new Error(`[Modal Error] Template with ID ${templateId} does not exist.`);
                         }
 
-                        let modal = new Modal(`.${mainContainerClass}`, modalTemp);
+                        const modalBody = this.findElement(
+                            ".modal-body",
+                            "[Modal Warning] Modal Body is not exist."
+                        );
+
+                        // Clear existing content in Modal Body
+                        modalBody.innerHTML = "";
+
+                        // Append the template content to Modal Body
+                        const content = template.content.cloneNode(true);
+                        modalBody.appendChild(content);
+                    } catch (error) {
+                        console.error(error.message);
+                    }
+                }
+            }
+
+            class ModalBtn extends Component {
+                constructor(target, modalBodyId, template = "#template-modal-btn") {
+                    super(target, template);
+                    this.modalBodyId = modalBodyId; // Store the template ID
+                }
+
+                setText(text) {
+                    this.textField = this.findElement(
+                        ".btn-text",
+                        "[ModalBtn Warning] ModalBtn text is not exist."
+                    );
+
+                    this.textField.textContent = text;
+                }
+
+                setGrid(row, column) {
+                    this.element.style.gridColumn = column;
+                    this.element.style.gridRow = row;
+                }
+
+                setEvent() {
+                    this.element.addEventListener("click", () => {
+                        const modal = new Modal(`.${containerID}`);
 
                         try {
-                            modal.setBody(template);
+                            modal.setBody(this.modalBodyId); // Pass the template ID to Modal
                         } catch (error) {
-                            console.error(`[Modal Error] Failed to set modal body: ${error.message}`);
+                            console.error(`[Modal Error] Failed to set Modal Body: ${error}`);
                         }
                     });
                 }
             }
         </script>
-
-        <template id="template-row-header">
-            <div class="row-header-btn">
-                <p class="row-header-text"></p>
+        <template id="template-modal-btn">
+            <div class="modal-btn">
+                <p class="btn-text"></p>
                 <i class="fa-solid fa-circle-question"></i>
             </div>
         </template>
-
         <style>
-            .row-header-btn {
+            .modal-btn {
                 display: flex;
                 flex-direction: column;
                 position: relative;
@@ -675,104 +559,80 @@
 
                 padding: 0.6rem;
 
-                justify-content: space-between;
-
                 width: 100%;
 
-                font-size: 14px;
-                font-weight: 500;
+                justify-content: space-between;
+                
                 text-align: left;
-                color: #333;
+                color: var(--black-color);
 
-                background-color: #f7f8fa;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
+                background-color: var(--white-color);
+                border: 0.08rem solid var(--gray-color-dark);
+                border-radius: 0.6rem;
 
-                transition: background-color 0.2s ease, box-shadow 0.2s ease;
+                transition: background-color 0.2s ease, box-shadow 0.2 ease;
                 cursor: pointer;
             }
 
-            .row-header-btn:hover {
-                background-color: #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            .modal-btn:hover {
+                background-color: var(--gray-color);
+                box-shadow: 0 0.2rem 0.4rem rgba(0,0,0,0.1);
             }
 
-            .row-header-btn:active {
-                background-color: #dfe3e6;
+            .modal-btn:active {
+                background-color: var(--gray-color-dark);
                 box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
-            .row-header-text {
-                flex: 1;
+            .btn-text {
                 margin: 0;
-                
-                font-size: 14px;
+
+                font-size: 1.2rem;
                 font-weight: 500;
                 text-align: left;
-                color: #333;
+                color: var(--black-color-dark);
+
+                flex: 1;
             }
 
             .fa-circle-question {
-                font-size: 16px;
+                font-size: 0.9rem;
                 text-align: right;
-                color: #666;
+                color: var(--gray-color-dark);
             }
         </style>
 
-        <!-- Column Header Component -->
         <script>
-            /**
-             * @class ColumnHeader
-             * @extends Component
-             * @description
-             * 열 헤더(Column Header) 컴포넌트를 생성하고 관리하는 클래스.
-             * 텍스트를 설정하거나, 추가적인 기능을 확장하여 사용할 수 있습니다.
-             *
-             * @example
-             * // 템플릿을 기반으로 ColumnHeader 컴포넌트 생성
-             * const columnTemplate = document.getElementById('template-column-header');
-             * const columnHeader = new ColumnHeader('#app', columnTemplate);
-             * columnHeader.setText('Example Column Header');
-             */
-            class ColumnHeader extends Component {
-                /**
-                 * @method setText
-                 * @description
-                 * 열 헤더의 텍스트를 설정합니다. `.column-header-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
-                 *
-                 * @param {string} text - 설정할 텍스트 값.
-                 * @throws {Error} `.column-header-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * const columnHeader = new ColumnHeader('#app', columnTemplate);
-                 * columnHeader.setText('New Column Header Text');
-                 */
-                setText(text) {
-                    const columnHeaderText = this.element.querySelector(".column-header-text");
-                    if (!columnHeaderText) {
-                        console.error('[ColumnHeader Error] .column-header-text element not found.');
-                        return;
-                    }
-                    columnHeaderText.textContent = text;
+            class Category extends Component {
+                constructor(target, template = "#template-category") {
+                    super(target, template);
                 }
 
-                setGrid(x, reduceValue) {
-                    this.element.style.gridColumn = `${x} / ${x + reduceValue}`
-                    this.element.style.gridRow = '1 / 2';
+                setText(text) {
+                    this.categoryTextField = this.findElement(
+                        ".category-text",
+                        "[Category] Category Text field is not exist."
+                    );
+
+                    this.categoryTextField.textContent = text.toUpperCase();
+                }
+
+                setGrid(row, column) {
+                    this.element.style.gridColumn = column;
+                    this.element.style.gridRow = row;
                 }
             }
         </script>
-
-        <template id="template-column-header">
-            <div class="column-header">
-                <div class="column-header-line"></div>
-                <p class="column-header-text"></p>
-                <div class="column-header-line"></div>
+        <template id="template-category">
+            <div class="category">
+                <div class="category-line"></div>
+                <p class="category-text"></p>
+                <div class="category-line"></div>
             </div>
         </template>
 
         <style>
-            .column-header {
+            .category {
                 display: flex;
                 flex-direction: row;
                 gap: 0.3rem;
@@ -780,98 +640,69 @@
                 align-items: center;
             }
 
-            .column-header-line {
-                height: 0.03rem;
+            .category-line {
+                height: 0.16rem;
 
-                border: 0.04rem solid black;
-                background-color: black;
+                border: 0.04rem solid var(--black-color-dark);
+                background-color: var(--black-color-dark);
 
-                flex: 2;
+                flex: 1.5;
             }
 
-            .column-header-text {
+            .category-text {
                 text-align: center;
+                font-size: 1.3rem;
+                font-weight: 780;
+
                 flex: 1;
             }
         </style>
 
-        <!-- Arrow Box Component -->
         <script>
-            /**
-             * @class ArrowBox
-             * @extends Component
-             * @description
-             * 화살표 박스(Arrow Box) 컴포넌트를 생성하고 관리하는 클래스.
-             * 텍스트를 설정하거나, 화살표 모양의 색상을 동적으로 변경할 수 있습니다.
-             *
-             * @example
-             * // 템플릿을 기반으로 ArrowBox 컴포넌트 생성
-             * const arrowTemplate = document.getElementById('template-arrow-box');
-             * const arrowBox = new ArrowBox('#app', arrowTemplate);
-             * arrowBox.setText('Example Text');
-             * arrowBox.setColor('#FF5733');
-             */
             class ArrowBox extends Component {
-                /**
-                 * @method setText
-                 * @description
-                 * 화살표 박스의 텍스트를 설정합니다. `.arrow-box__text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
-                 *
-                 * @param {string} text - 설정할 텍스트 값.
-                 * @throws {Error} `.arrow-box__text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * const arrowBox = new ArrowBox('#app', arrowTemplate);
-                 * arrowBox.setText('New Arrow Box Text');
-                 */
-                setText(text, size) {
-                    const arrowBoxText = this.element?.querySelector(".arrow-box-text");
-                    if (!arrowBoxText) {
-                        console.error('[ArrowBox Error] .arrow-box-text element not found.');
-                        return;
-                    }
-                    arrowBoxText.textContent = text;
-                    arrowBoxText.style.fontSize = size ? size : "1rem";
+                constructor(target, template = "#template-arrow-box") {
+                    super(target, template);
                 }
 
-                /**
-                 * @method setColor
-                 * @description
-                 * 화살표 모양의 색상을 설정합니다. `.arrow-box__shape` 클래스를 가진 요소의 배경색을 업데이트합니다.
-                 *
-                 * @param {string} color - 설정할 색상 값 (CSS 색상 값).
-                 * @throws {Error} `.arrow-box__shape` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * const arrowBox = new ArrowBox('#app', arrowTemplate);
-                 * arrowBox.setColor('#FF5733');
-                 */
+                setText(text) {
+                    this.arrowBoxTextField = this.findElement(
+                        ".arrow-box-text",
+                        "[ArrowBox] Arrow Box Text field is not exist."
+                    );
+
+                    this.arrowBoxTextField.textContent = text;
+                }
+
+                setTextSize(size) {
+                    this.arrowBoxTextField = this.findElement(
+                        ".arrow-box-text",
+                        "[ArrowBox] Arrow Box Text field is not exist."
+                    );
+
+                    this.arrowBoxTextField.style.fontSize = size;
+                }
+
                 setColor(color) {
-                    const arrowBoxShape = this.element?.querySelector(".arrow-box-shape");
-                    
-                    if (!arrowBoxShape) {
-                        console.error('[ArrowBox Error] .arrow-box-shape element not found.');
-                        return;
-                    }
-                    arrowBoxShape.style.backgroundColor = color;
+                    this.arrowBox = this.findElement(
+                        ".arrow",
+                        "[ArrobBox] Arrow Box is not exist."
+                    );
+
+                    this.arrowBox.style.backgroundColor = color;
                 }
 
-                setGrid(x, y) {
-                    const arrowContainer = this?.element;
-
-                    arrowContainer.style.gridColumn = `${x} / ${x + 1}`;
-                    arrowContainer.style.gridRow = `${y} / ${y + 1}`;
+                setGrid(row, column) {
+                    this.element.style.gridColumn = column;
+                    this.element.style.gridRow = row;
                 }
             }
         </script>
-
         <template id="template-arrow-box">
             <div class="arrow-box">
-                <div class="arrow-box-shape"></div>
+                <div class="arrow"></div>
                 <p class="arrow-box-text"></p>
             </div>
         </template>
-
         <style>
             .arrow-box {
                 display: flex;
@@ -881,7 +712,7 @@
                 height: 100%;
             }
 
-            .arrow-box-shape {
+            .arrow {
                 position: absolute;
 
                 top: 0;
@@ -891,6 +722,7 @@
                 height: 100%;
 
                 clip-path: url(#rounded-polygon);
+                background-color: var(--doosan-main-color-lt);
 
                 border-radius: 0.3rem;
 
@@ -900,9 +732,8 @@
             .arrow-box-text {
                 display: flex;
                 position: absolute;
-                z-index: 2;
 
-                padding: 0 0.7rem 0 0.6rem !important;
+                padding: 0 0.73rem 0 0.58rem;
 
                 top: 0;
                 bottom: 0;
@@ -913,11 +744,14 @@
                 word-break: keep-all;
                 white-space: wrap;
 
-                color: white;
-                font-weight: 435;
+                line-height: 0.9rem;
+
+                color: var(--white-color);
+                font-weight: 535;
+
+                z-index: 2;
             }
         </style>
-
         <!-- SVG Defining the Clip Path -->
         <svg width="0" height="0">
             <defs>
@@ -938,316 +772,443 @@
             </defs>
         </svg>
 
-        <!-- Round Link Button Component -->
-        <script>
-            /**
-             * @class RoundLinkButton
-             * @extends Component
-             * @description
-             * 둥근 링크 버튼(Round Link Button) 컴포넌트를 생성하고 관리하는 클래스.
-             * 텍스트를 설정하거나, 버튼의 링크를 동적으로 설정할 수 있습니다.
-             *
-             * @example
-             * // 템플릿을 기반으로 RoundLinkButton 컴포넌트 생성
-             * const buttonTemplate = document.getElementById('template-rounded-link-button');
-             * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
-             * roundLinkButton.setText('Example Button');
-             * roundLinkButton.setLink('https://example.com');
-             */
-            class RoundLinkButton extends Component {
-                /**
-                 * @method setText
-                 * @description
-                 * 둥근 링크 버튼의 텍스트를 설정합니다. `.rounded-link-button-text` 클래스를 가진 요소를 찾아 텍스트를 업데이트합니다.
-                 *
-                 * @param {string} text - 설정할 텍스트 값.
-                 * @throws {Error} `.rounded-link-button-text` 요소가 존재하지 않을 경우 에러를 발생시킵니다.
-                 *
-                 * @example
-                 * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
-                 * roundLinkButton.setText('New Button Text');
-                 */
-                setText(text) {
-                    const buttonText = this.element.querySelector(".rounded-link-button-text");
-                    if (!buttonText) {
-                        console.error('[RoundLinkButton Error] .rounded-link-button-text element not found.');
-                        return;
-                    }
-                    buttonText.textContent = text;
-                }
-
-                /**
-                 * @method setLink
-                 * @description
-                 * 둥근 링크 버튼의 링크를 설정합니다. `data-url` 속성에 링크를 저장합니다.
-                 *
-                 * @param {string} link - 설정할 링크 값 (URL).
-                 *
-                 * @example
-                 * const roundLinkButton = new RoundLinkButton('#app', buttonTemplate);
-                 * roundLinkButton.setLink('https://example.com');
-                 */
-                setLink(link) {
-                    this.element.dataset.url = link;
-                }
-            }
-        </script>
-
-        <template id="template-rounded-link-button">
-            <div class="rounded-link-button">
-                <p class="rounded-link-button-text"></p>
-                <i class="fa-solid fa-right-to-bracket rounded-link-button-icon"></i>
-            </div>
-        </template>
-
-        <style>
-            .rounded-link-button {
-                display: flex;
-                flex-direction: column;
-
-                padding: 0.8rem;
-
-                justify-content: space-between;
-
-                width: 100%;
-                height: 100%;
-
-                background-color: #005EBD;
-                color: #fff;
-
-                border-radius: 1rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-                cursor: pointer;
-                transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            .rounded-link-button-text {
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin: 0;
-            }
-            .rounded-link-button-icon {
-                display: none;
-                text-align: end;
-            }
-
-            .rounded-link-button:hover {
-                background-color: #004a94;
-                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-            }
-            .rounded-link-button:hover .rounded-link-button-icon {
-                display: block;
-            }
-
-            /* 클릭 효과 */
-            .rounded-link-button:active {
-                background-color: #003366;
-                box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2);
-            }
-        </style>
-
-        <!-- MODAL TEMPLATE -->
-        <template id="template-modal-process">
-            <style>
-                #process-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.6rem;
-
-                    padding: 0 0.6rem;
-
-                    width: 80vw;
-                    height: 70vh;
-
-                    overflow: scroll;
-                }
-
-                /* #chart-process 스타일 */
-                #chart-process {
-                    padding: 0.3rem;
-                    width: 100%;
-                }
-
-                #chart-info {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.8rem;
-                }
-
-                /* 전체 테이블 스타일 */
-                #chart-info table {                    
-                    width: 100%;
-
-                    font-size: 1rem;
-                    font-family: 'Arial', sans-serif;
-
-                    background-color: #ffffff;
-
-                    border-radius: 0.3rem;
-                    border-collapse: collapse;
-
-                    overflow: hidden;
-                }
-
-                /* 테이블 헤더 스타일 */
-                #chart-info thead {
-                    background-color: #f9fafb;
-                }
-
-                #chart-info th {
-                    padding: 0.4rem;
-
-                    text-align: center;
-                    font-weight: 600;
-                    color: #333333;
-
-                    border: 1px solid #e0e0e0;
-                    border-bottom: 1px solid #e5e7eb;
-                }
-
-                /* 테이블 본문 스타일 */
-                #chart-info tr {
-                    border-bottom: 1px solid #e5e7eb;
-                }
-
-                #chart-info tr:last-child {
-                    border-bottom: none;
-                }
-
-                #chart-info td {
-                    padding: 0.3rem 1rem;
-
-                    color: #555555;
-                    border: 1px solid #e0e0e0;
-                }
-            </style>
-
-            <div id="process-body">
-                <div id="chart-process"></div>
-                <div id="chart-info">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>단계</th>
-                                <th>설명</th>
-                            </tr>
-                        </thead>
-                        <tbody id="chart-category-info-table"></tbody>
-                    </table>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>단계</th>
-                                <th>설명</th>
-                            </tr>
-                        </thead>
-                        <tbody id="chart-process-info-table"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <script>
-                const modalBodyContainer = document.querySelector("#chart-process");
-
+        <template id="template-modal-process-body">
+            <script>        
                 (() => {
-                    const totalProcess = Object.keys(columnContent).reduce((column, key) => {
-                        return column + columnContent[key].process.length;
+                    const modalContainerID = "modal-container";
+                    // Modal Container 생성
+                    const modalContainer = document.createElement("div");
+                    const categoryFR = "1fr";
+                    const processFR = "1.5fr";
+        
+                    const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
+                        return total + (sdlcStructure.columns[key].span || 0);
                     }, 0);
-
-                    modalBodyContainer.style.display = 'grid'
-                    modalBodyContainer.style.gridTemplateColumns = `repeat(${totalProcess - 1}, 1fr) 1.24fr`;
-                    modalBodyContainer.style.gridTemplateRows = `0.4fr 0.5fr`;
-                    modalBodyContainer.style.gap = '0.6rem';
-                    modalBodyContainer.style.height = "7rem";
-                })();
-
-                (() => {
-                    let categoryX = 1;
-                    let processX = 1;
-
-                    Object.keys(columnContent).forEach(key => {
-                        // CATEGORY HEADER SET
-                        if (!categoryTemp) {
-                            throw new Error('[Error] categoryTemp is not defined or invalid.');
-                        }
-
-                        const category = new ColumnHeader(`#chart-process`, categoryTemp);
-                        const row = extractItems(columnContent[key].process).length;
-
-                        category.setText(key);
-                        category.setGrid(categoryX, row);
-
-                        categoryX += row;
-
-                        // PROCESS HEADER SET
-                        extractItems(columnContent[key].process).forEach(object => {
-                            const process = new ArrowBox(`#chart-process`, processTemp);
-
-                            process.setText(object.name, "0.8rem");
-                            process.setGrid(processX, 2);
-                            process.setColor("var(--doosan-main-color)");
-
-                            processX += 1;
+        
+                    modalContainer.className = modalContainerID;
+                    modalContainer.id = modalContainerID;
+                    modalContainer.style.display = "grid";
+                    modalContainer.style.gridTemplateColumns = `1.3fr repeat(${totalProcess - 2}, 1fr) 1.7fr`;
+                    modalContainer.style.gridTemplateRows = `${categoryFR} ${processFR}`;
+                    modalContainer.style.gap = "0.89rem 0.6rem";
+        
+                    document.querySelector(".modal-body").appendChild(modalContainer);
+        
+                    let startCategoryColumn = 1;
+                    let startProcessColumn = 1;
+        
+                    // Category 및 Process 설정
+                    Object.keys(sdlcStructure.columns).forEach(categoryText => {
+                        const category = new Category(`.${modalContainerID}`);
+                        const row = sdlcStructure.columns[categoryText].span;
+        
+                        category.setText(categoryText);
+                        category.setGrid('1/2', `${startCategoryColumn}/${startCategoryColumn + row}`);
+                        startCategoryColumn += row;
+        
+                        sdlcStructure.columns[categoryText].process.forEach(processObject => {
+                            const process = new ArrowBox(`.${modalContainerID}`);
+                            process.setText(processObject.name);
+                            process.setTextSize("0.85rem");
+                            process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
+                            startProcessColumn += 1;
                         });
                     });
-                })();
-
-                (() => {
-                    const tbody = document.querySelector("#chart-category-info-table");
-
-                    Object.keys(columnContent).forEach(key => {
-                        const tr = document.createElement("tr");
-                        const category_td = document.createElement("td");
-                        const categoryInfo_td = document.createElement("td");
-
-                        category_td.innerText = key;
-                        categoryInfo_td.innerText = columnContent[key].description;
-
-                        tr.appendChild(category_td);
-                        tr.appendChild(categoryInfo_td);
-
-                        tbody.appendChild(tr);
+        
+                    // 테이블 생성
+                    const table = document.createElement("table");
+                    table.style.borderCollapse = "collapse";
+                    table.style.borderRadius = "0.4rem";
+                    table.style.gridArea = "3 / 1 / 4 / 7"
+                    table.style.overflow = "hidden";
+        
+                    // 테이블 헤더 생성
+                    const thead = document.createElement("thead");
+                    const headerRow = document.createElement("tr");
+        
+                    const nameHeader = document.createElement("th");
+                    nameHeader.textContent = "진행";
+                    nameHeader.style.border = "1px solid var(--gray-color-dark)";
+                    nameHeader.style.padding = "0.5rem 1rem";
+                    nameHeader.style.backgroundColor = "var(--gray-color)";
+                    nameHeader.style.textAlign = "left";
+        
+                    const descriptionHeader = document.createElement("th");
+                    descriptionHeader.textContent = "설명";
+                    descriptionHeader.style.border = "1px solid var(--gray-color-dark)";
+                    descriptionHeader.style.padding = "0.5rem 1rem";
+                    descriptionHeader.style.backgroundColor = "var(--gray-color)";
+                    descriptionHeader.style.textAlign = "left";
+        
+                    headerRow.appendChild(nameHeader);
+                    headerRow.appendChild(descriptionHeader);
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+        
+                    // 테이블 바디 생성
+                    const tbody = document.createElement("tbody");
+        
+                    Object.keys(sdlcStructure.columns).forEach(categoryKey => {
+                        const category = sdlcStructure.columns[categoryKey];
+        
+                        category.process.forEach(process => {
+                            const row = document.createElement("tr");
+        
+                            const nameCell = document.createElement("td");
+                            nameCell.textContent = process.name;
+                            nameCell.style.border = "1px solid var(--gray-color-dark)";
+                            nameCell.style.padding = "0.5rem 1rem";
+        
+                            const descriptionCell = document.createElement("td");
+                            descriptionCell.textContent = process.description;
+                            descriptionCell.style.border = "1px solid var(--gray-color-dark)";
+                            descriptionCell.style.padding = "0.5rem 1rem";
+        
+                            row.appendChild(nameCell);
+                            row.appendChild(descriptionCell);
+                            tbody.appendChild(row);
+                        });
                     });
-                })();
-
-                (() => {
-                    const tbody = document.querySelector("#chart-process-info-table");
-
-                    Object.keys(columnContent).forEach(key => {
-                        columnContent[key].process.forEach(object => {
-                            const tr = document.createElement("tr");
-                            const process_td = document.createElement("td");
-                            const processInfo_td = document.createElement("td");
-
-                            process_td.innerText = object.name;
-                            processInfo_td.innerText = object.description;
-
-                            tr.appendChild(process_td);
-                            tr.appendChild(processInfo_td);
-
-                            tbody.appendChild(tr);
-                        })
-                    });
+        
+                    table.appendChild(tbody);
+                    modalContainer.appendChild(table);
                 })();
             </script>
+        
+            <style>
+                table {
+                    width: 100%; /* 모달의 80% 너비 */
+                    border-collapse: collapse;
+                    border-radius: 0.6rem;
+                    overflow: hidden;
+                }
+        
+                th {
+                    font-weight: bold;
+                    font-size: 0.9rem !important;
+                    text-transform: uppercase;
+                    border: 1px solid var(--gray-color-dark);
+                    padding: 0.5rem;
+                    background-color: var(--gray-color);
+                    text-align: left;
+                }
+        
+                td {
+                    font-size: 0.9rem !important;
+                    border: 1px solid var(--gray-color-dark);
+                    padding: 0.5rem;
+                }
+        
+                tr:nth-child(even) {
+                    background-color: var(--gray-color-light);
+                }
+            </style>
         </template>
 
-        <template id="template-modal-approval">
+        <template id="template-modal-approval-body">
+            <script>
+                (() => {
+                    const modalContainerID = "modal-container";
+                    // Modal Container 생성
+                    const modalContainer = document.createElement("div");
+                    const categoryFR = "0.7fr";
+                    const processFR = "1.3fr";
+                    const approvalFR = "1.8fr";
+        
+                    const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
+                        return total + (sdlcStructure.columns[key].span || 0);
+                    }, 0);
+        
+                    modalContainer.className = modalContainerID;
+                    modalContainer.id = modalContainerID;
+                    modalContainer.style.display = "grid";
+                    modalContainer.style.gridTemplateColumns = `1.3fr repeat(${totalProcess - 2}, 1fr) 1.7fr`;
+                    modalContainer.style.gridTemplateRows = `${categoryFR} ${processFR} ${approvalFR}`;
+                    modalContainer.style.gap = "0.83rem 0.6rem";
+        
+                    document.querySelector(".modal-body").appendChild(modalContainer);
+        
+                    let startCategoryColumn = 1;
+                    let startProcessColumn = 1;
+                    let startApprovalColumn = 1;
+        
+                    // Category 및 Process 설정
+                    Object.keys(sdlcStructure.columns).forEach(categoryText => {
+                        const category = new Category(`.${modalContainerID}`);
+                        const row = sdlcStructure.columns[categoryText].span;
+        
+                        category.setText(categoryText);
+                        category.setGrid('1/2', `${startCategoryColumn}/${startCategoryColumn + row}`);
+                        startCategoryColumn += row;
+        
+                        sdlcStructure.columns[categoryText].process.forEach(processObject => {
+                            const process = new ArrowBox(`.${modalContainerID}`);
+                            process.setText(processObject.name);
+                            process.setTextSize("0.85rem");
+                            process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
+                            startProcessColumn += 1;
+                        });
+        
+                        // Approval Arrow 설정
+                        const approvalList = document.createElement("div");
+                        approvalList.className = `modal-approval-${categoryText}-list`;
+                        approvalList.style.display = "flex";
+                        approvalList.style.flexDirection = "row";
+                        approvalList.style.gap = "0.2rem";
+                        approvalList.style.gridColumn = `${startApprovalColumn} / ${startApprovalColumn + row}`;
+                        approvalList.style.gridRow = "3/4";
+        
+                        modalContainer.appendChild(approvalList);
+        
+                        sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
+                            const approval = new ArrowBox(`.modal-approval-${categoryText}-list`);
+                            approval.setText(approvalObject.name);
+                            approval.setTextSize("0.68rem");
+                            approval.setColor(approvalObject.systemLegend.color); // Fix: Use systemLegend color
+                        });
+        
+                        startApprovalColumn += row;
+                    });
+        
+                    // Approval 테이블 생성
+                    const table = document.createElement("table");
+                    table.style.borderCollapse = "collapse";
+                    table.style.borderRadius = "0.4rem";
+                    table.style.gridArea = "4 / 1 / 5 / 7";
+                    table.style.overflow = "hidden";
+        
+                    // 테이블 헤더 생성
+                    const thead = document.createElement("thead");
+                    const headerRow = document.createElement("tr");
+        
+                    const nameHeader = document.createElement("th");
+                    nameHeader.textContent = "품의 명";
+                    nameHeader.style.border = "1px solid var(--gray-color-dark)";
+                    nameHeader.style.padding = "0.5rem 1rem";
+                    nameHeader.style.backgroundColor = "var(--gray-color)";
+                    nameHeader.style.textAlign = "left";
+        
+                    const descriptionHeader = document.createElement("th");
+                    descriptionHeader.textContent = "설명";
+                    descriptionHeader.style.border = "1px solid var(--gray-color-dark)";
+                    descriptionHeader.style.padding = "0.5rem 1rem";
+                    descriptionHeader.style.backgroundColor = "var(--gray-color)";
+                    descriptionHeader.style.textAlign = "left";
+        
+                    const requiredHeader = document.createElement("th");
+                    requiredHeader.textContent = "필수 여부";
+                    requiredHeader.style.border = "1px solid var(--gray-color-dark)";
+                    requiredHeader.style.padding = "0.5rem 1rem";
+                    requiredHeader.style.backgroundColor = "var(--gray-color)";
+                    requiredHeader.style.textAlign = "left";
+        
+                    headerRow.appendChild(nameHeader);
+                    headerRow.appendChild(descriptionHeader);
+                    headerRow.appendChild(requiredHeader);
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+        
+                    // 테이블 바디 생성
+                    const tbody = document.createElement("tbody");
+        
+                    Object.keys(sdlcStructure.columns).forEach(categoryKey => {
+                        const category = sdlcStructure.columns[categoryKey];
+        
+                        category.approval.forEach(approval => {
+                            const row = document.createElement("tr");
+        
+                            const nameCell = document.createElement("td");
+                            nameCell.textContent = approval.name;
+                            nameCell.style.border = "1px solid var(--gray-color-dark)";
+                            nameCell.style.padding = "0.5rem 1rem";
+        
+                            const descriptionCell = document.createElement("td");
+                            descriptionCell.textContent = approval.description;
+                            descriptionCell.style.border = "1px solid var(--gray-color-dark)";
+                            descriptionCell.style.padding = "0.5rem 1rem";
+        
+                            const requiredCell = document.createElement("td");
+                            if (typeof approval.required === "string") {
+                                requiredCell.innerHTML = `<i class='fa-solid fa-circle-check'></i><br/>(${approval.required})`;
+                            } else if (approval.required === true) {
+                                requiredCell.innerHTML = "<i class='fa-solid fa-circle-check'></i>";
+                            } else {
+                                requiredCell.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                            }
+                                                        requiredCell.style.border = "1px solid var(--gray-color-dark)";
+                            requiredCell.style.padding = "0.5rem 1rem";
+                            requiredCell.style.textAlign = "center";
+        
+                            row.appendChild(nameCell);
+                            row.appendChild(descriptionCell);
+                            row.appendChild(requiredCell);
+                            tbody.appendChild(row);
+                        });
+                    });
+        
+                    table.appendChild(tbody);
+                    modalContainer.appendChild(table);
+                })();
+            </script>
+        
+            <style>
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    border-radius: 0.4rem;
+                    overflow: hidden;
+                }
+        
+                th {
+                    font-weight: bold;
+                    font-size: 1rem !important;
+                    text-transform: uppercase;
+                    border: 1px solid var(--gray-color-dark);
+                    padding: 0.5rem;
+                    background-color: var(--gray-color);
+                    text-align: left;
+                }
+        
+                td {
+                    font-size: 0.9rem !important;
+                    border: 1px solid var(--gray-color-dark);
+                    padding: 0.5rem;
+                }
+        
+                tr:nth-child(even) {
+                    background-color: var(--gray-color-light);
+                }
 
+                .fa-circle-check {
+                    color: green;
+                }
+                .fa-circle-xmark {
+                    color: red;
+                }
+            </style>
         </template>
 
-        <template id="template-modal-progress">
+        <!-- 절차 (Procedure) Modal -->
+        <template id="template-modal-progress-body">
+            <div class="modal-content">
+                <h2>절차 (Procedure)</h2>
+                <p>절차는 품질 관리를 수행하기 위해 따라야 하는 일련의 단계나 규칙을 의미합니다. 이는 품질 목표를 달성하기 위한 체계적이고 반복 가능한 방법을 제시합니다.</p>
+                <ul>
+                    <li><strong>품질 계획 (Quality Planning):</strong> 품질 목표와 성과 기준을 설정하고, 이를 달성하기 위한 전략과 자원을 배분하는 과정입니다.</li>
+                    <li><strong>품질 보증 (Quality Assurance):</strong> 계획된 활동과 체계를 통해 품질 목표가 달성되도록 보장하는 과정입니다. 이를 통해 예방적인 품질 관리가 이루어집니다.</li>
+                    <li><strong>품질 통제 (Quality Control):</strong> 실제 제품이나 서비스가 품질 기준을 충족하는지 확인하고, 불일치가 발생할 경우 이를 수정하는 과정입니다.</li>
+                </ul>
+            </div>
 
+            <style>
+                .modal-content {
+                    padding: 1rem;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                    color: var(--black-color);
+                }
+
+                h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                    color: var(--doosan-main-color);
+                }
+
+                ul {
+                    margin-top: 1rem;
+                    padding-left: 1.5rem;
+                }
+
+                li {
+                    margin-bottom: 0.5rem;
+                }
+
+                strong {
+                    color: var(--doosan-main-color-bk);
+                }
+            </style>
         </template>
 
-        <template id="template-modal-tool">
+        <!-- 도구 (Tool) Modal -->
+        <template id="template-modal-tools-body">
+            <div class="modal-content">
+                <h2>도구 (Tool)</h2>
+                <p>도구는 품질 관리 활동을 수행하는 데 사용되는 장비, 소프트웨어, 기술 등을 포함합니다. 이들은 데이터 수집, 분석, 시각화 등을 통해 품질 관리 효율성을 높입니다.</p>
+                <ul>
+                    <li><strong>통계적 프로세스 제어 (SPC) 소프트웨어:</strong> 제조 과정에서 품질을 통계적으로 모니터링하고 분석하는 도구입니다.</li>
+                    <li><strong>피드백 수집 도구:</strong> 고객이나 사용자로부터 피드백을 체계적으로 수집하고 분석하는 소프트웨어나 설문 도구입니다.</li>
+                    <li><strong>결함 추적 시스템:</strong> 제품이나 서비스의 결함이나 문제점을 기록하고 추적하는 소프트웨어입니다.</li>
+                </ul>
+            </div>
 
+            <style>
+                .modal-content {
+                    padding: 1rem;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                    color: var(--black-color);
+                }
+
+                h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                    color: var(--doosan-main-color);
+                }
+
+                ul {
+                    margin-top: 1rem;
+                    padding-left: 1.5rem;
+                }
+
+                li {
+                    margin-bottom: 0.5rem;
+                }
+
+                strong {
+                    color: var(--doosan-main-color-bk);
+                }
+            </style>
         </template>
 
-        <template id="template-modal-guide">
+        <!-- 가이드 (Guide) Modal -->
+        <template id="template-modal-guides-body">
+            <div class="modal-content">
+                <h2>가이드 (Guide)</h2>
+                <p>가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.</p>
+                <ul>
+                    <li><strong>품질 관리 매뉴얼:</strong> 품질 관리 시스템의 전반적인 지침과 절차를 설명한 문서입니다.</li>
+                    <li><strong>베스트 프랙티스 지침:</strong> 특정 상황에서 품질 관리를 효과적으로 수행하기 위한 권장 행동이나 방법을 제시합니다.</li>
+                    <li><strong>품질 기준 및 표준:</strong> 조직 또는 산업 내에서 인정된 품질 수준을 정의하며, 이를 준수해야 합니다.</li>
+                </ul>
+            </div>
 
+            <style>
+                .modal-content {
+                    padding: 1rem;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                    color: var(--black-color);
+                }
+
+                h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                    color: var(--doosan-main-color);
+                }
+
+                ul {
+                    margin-top: 1rem;
+                    padding-left: 1.5rem;
+                }
+
+                li {
+                    margin-bottom: 0.5rem;
+                }
+
+                strong {
+                    color: var(--doosan-main-color-bk);
+                }
+            </style>
         </template>
 
         <!-- UTIL FUNCTION -->
@@ -1263,70 +1224,291 @@
         </script>
 
         <script>
-            const categoryTemp = document.querySelector("#template-column-header");
-            const processTemp = document.querySelector("#template-arrow-box");
-            const approvalTemp = document.querySelector("#template-arrow-box");
-
             (() => {
-                let categoryX = 2;
-                let processX = 2;
-                let approvalX = 2;
+                let startCategoryColumn = 2;
+                let startProcessColumn = 2;
+                let startApprovalColumn = 2;
 
-                Object.keys(columnContent).forEach(key => {
+                Object.keys(sdlcStructure.columns).map(categoryText => {
                     // CATEGORY HEADER SET
-                    const category = new ColumnHeader(`.${mainContainerClass}`, categoryTemp);
-                    const row = extractItems(columnContent[key].process).length;
+                    const category = new Category(`.${containerID}`);
+                    const row = sdlcStructure.columns[categoryText].span
+                    
+                    category.setText(categoryText);
+                    category.setGrid('1/2', `${startCategoryColumn}/${startCategoryColumn + row}`);
 
-                    category.setText(key);
-                    category.setGrid(categoryX, row);
-
-                    categoryX += row;
+                    startCategoryColumn += row;
 
                     // PROCESS HEADER SET
-                    extractItems(columnContent[key].process).forEach(object => {
-                        const process = new ArrowBox(`.${mainContainerClass}`, processTemp);
+                    sdlcStructure.columns[categoryText].process.forEach(processObject => {
+                        const process = new ArrowBox(`.${containerID}`);
 
-                        process.setText(object.name, "0.8rem");
-                        process.setGrid(processX, 2);
-                        process.setColor("var(--doosan-main-color)");
+                        process.setText(processObject.name);
+                        process.setTextSize("1.15rem")
+                        process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
 
-                        processX += 1;
+                        startProcessColumn += 1;
                     });
 
-                    // APPROVAL HEADER SET
-                    const approvalTb = document.createElement("div");
+                    //APPROVAL HEADER SET
+                    const approvalList = document.createElement("div");
 
-                    approvalTb.className = `approval-${key}-list approval-list`;
-                    approvalTb.style.gridColumn = `${approvalX} / ${row + approvalX}`;
-                    approvalTb.style.gridRow = "3 / 4";
+                    approvalList.className = `approval-${categoryText}-list`;
+                    approvalList.style.display = "flex"
+                    approvalList.style.flexDirection = "row"
+                    approvalList.style.gap = "0.4rem";
+                    approvalList.style.gridColumn = `${startApprovalColumn} / ${startApprovalColumn + row}`;
+                    approvalList.style.gridRow = "3/4"
 
-                    document.querySelector(`.${mainContainerClass}`).appendChild(approvalTb);
+                    document.querySelector(`.${containerID}`).appendChild(approvalList);
+                    
+                    sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
+                        const approval = new ArrowBox(`.approval-${categoryText}-list`);
 
-                    extractItems(columnContent[key].approval).forEach(object => {
-                        const approval = new ArrowBox(`.approval-${key}-list`, approvalTemp);
-                        approval.setText(object.name, "0.6rem");
-                        approval.setColor("var(--doosan-main-color)");
+                        approval.setText(approvalObject.name);
+                        approval.setTextSize("0.85rem");
+                        approval.setColor(approvalObject.systemLegend.color);
+                        approval.element.className += ` ` + approvalObject.systemLegend.name
                     });
 
-                    approvalX += row;
+                    startApprovalColumn += row;
+                });
+            })();
+
+            (() => {
+                let startRow = 1;
+
+                sdlcStructure.rows.forEach(row => {
+                    const rowHeader = new ModalBtn(
+                        `.${containerID}`,
+                        `#template-modal-${row.id}-body` // Pass the template ID
+                    );
+
+                    rowHeader.setText(row.name);
+                    rowHeader.setGrid(`${startRow}/${startRow + row.span}`, "1/2");
+
+                    startRow += row.span;
                 });
             })();
         </script>
 
-        <!-- ROW HEADER SET -->
+        <template id="template-sdlc-framework-data">
+            <div id="progress-sales-data" class="data-list">
+                <div id="vrb" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/XoCsBw">VRB</div>
+                <div id="crb" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/BAgkC">CRB</div>
+            </div>
+            <div id="progress-dev-data" class="data-list">
+                <div id="prb" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/xQYkC">PRB</div>
+                <div id="manage-standards" class="multiLinkBtn">
+                    <p>프로젝트 관리</p>
+                    <div class="top">
+                        <div id="manage-standards-plan" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/ggYkC">프로젝트 계획</div>
+                        <div id="manage-standards-control" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/jgYkC">프로젝트 통제</div>
+                        <div id="manage-standards-fin" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/nQYkC">프로젝트 종료</div>
+                    </div>
+                    <div class="bottom">
+                        <div id="manage-standards-risk-manage" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/rwYkC">프로젝트 위험관리</div>
+                    </div>
+                </div>
+            </div>
+            <div id="operater-manage" class="multiLinkBtn">
+                <p>운영 관리</p>
+                <div class="data-list">
+                    <div id="incident-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/iwskC">인시던트 관리</div>
+                    <div id="problem-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/mQskC">문제 관리</div>
+                    <div id="change-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/pQskC">변경 관리</div>
+                    <div id="release-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/sQskC">릴리스 관리</div>
+                    <div id="configuration-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/vQskC">구성 관리</div>
+                    <div id="failure-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/zQskC">장애 관리</div>
+                    <div id="availability-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/2gskC">가용성 관리</div>
+                    <div id="capacity-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/6AskC">용량 관리</div>
+                    <div id="continuity-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/9AskC">연속성 관리</div>
+                </div>
+            </div>
+            <div id="devops-tools" class="multiLinkBtn">
+                <p>DevOps 도구</p>
+                <div class="data-list">
+                    <div id="jira" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/UQskC">Jira</div>
+                    <div id="confluence" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/UwskC">Confluence</div>
+                    <div id="gitlab" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/VQskC">Gitlab</div>
+                    <div id="codeinsight" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/VwskC">CodeInsight</div>
+                    <div id="whatap" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/WQskC">Whatap</div>
+                    <div id="n8n" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/WwskC">N8n</div>
+                    <div id="office365" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/XQskC">Office 365</div>
+                </div>
+            </div>
+            <div id="project-execution-guide" class="multiLinkBtn">
+                <p>프로젝트 수행 가이드</p>
+                <div class="data-list">
+                    <div id="pre-deployment" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/kYGsBw">내부인력 선투입</div>
+                    <div id="purchase" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/n4GsBw">구매관리 규정</div>
+                    <div id="personal-info" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/lYGsBw">개인정보 점검</div>
+                    <div id="performance-check" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/mYGsBw">성능 점검</div>
+                    <div id="open-source" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/l4GsBw">오픈소스 점검</div>
+                    <div id="system" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/nIGsBw">시스템 중요도 산정</div>
+                    <div id="expense-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/r4GsBw">프로젝트 경비처리</div>
+                    <div id="config-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/j4GsBw">위임전결 규정</div>
+                    <div id="req-management" class="linkBtn" data-url="https://wiki.devops.doosan.com/x/k4GsBw">정보보안 점검</div>
+                </div>
+            </div>
+
+            <script>
+                const linkBtnList = document.querySelectorAll(".linkBtn");
+
+                linkBtnList.forEach(linkBtn => {
+                    linkBtn.addEventListener("click", () => {
+                        window.open(linkBtn.dataset.url, "_blank"); // 새 창에서 열기
+                    });
+                });
+            </script>
+            
+            <style>
+                /* 공통 스타일 */
+                .linkBtn {
+                    padding: 0.8rem;
+                    width: 100%;
+                    height: 100%;
+                    background-color: var(--black-color); /* 기본 밝은 베이지 배경 */
+                    color: var(--white-color); /* 어두운 검정 텍스트 */
+                    border-radius: 0.4rem;
+                    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+                    font-size: 1.25rem;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                }
+
+                .linkBtn:hover {
+                    background-color: var(--beige-color); /* Hover 시 기본 베이지 배경 */
+                    transform: translateY(-0.2rem); /* 살짝 떠오르는 효과 */
+                }
+
+                /* VRB, CRB, PRB: 블랙 계열 배경 */
+                #vrb, #crb, #prb {
+                    background-color: var(--black-color); /* 블랙 배경 */
+                    color: var(--white-color); /* 흰색 텍스트 */
+                }
+
+                #vrb:hover, #crb:hover, #prb:hover {
+                    background-color: var(--black-color-dark); /* Hover 시 더 어두운 블랙 */
+                }
+
+                /* MultiLinkBtn: 다크 베이지 배경 */
+                .multiLinkBtn {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.8rem;
+                    padding: 1rem;
+                    background-color: var(--beige-color-dark); /* 다크 베이지 배경 */
+                    border-radius: 0.6rem;
+                    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+                }
+
+                .multiLinkBtn p {
+                    margin: 0;
+                    font-size: 1.15rem;
+                    font-weight: bold;
+                    color: var(--black-color-dark); /* 어두운 검정 텍스트 */
+                }
+
+                /* MultiLinkBtn 내부 linkBtn */
+                .multiLinkBtn .linkBtn {
+                    padding: 0.6rem;
+                    background-color: var(--black-color); /* 기본 밝은 베이지 배경 */
+                    color: var(--white-color); /* 어두운 검정 텍스트 */
+                    font-size: 1rem;
+                    font-weight: 500;
+                }
+
+                .multiLinkBtn .linkBtn:hover {
+                    background-color: var(--black-color-medium); /* Hover 시 기본 베이지 배경 */
+                    color: var(--white-color); /* 텍스트를 더 어둡게 */
+                    transform: translateY(-0.1rem); /* 살짝 떠오르는 효과 */
+                }
+
+                /* 데이터 리스트 스타일 */
+                .data-list {
+                    display: grid;
+                    gap: 0.6rem;
+                }
+
+                /* 세부 스타일 */
+                #progress-sales-data {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.6rem;
+                    grid-area: 4 / 2 / 5 / 3;
+                }
+
+                #progress-dev-data {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+                    grid-area: 4 / 3 / 5 / 7;
+                }
+
+                #manage-standards {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+                }
+
+                #manage-standards .top, .bottom {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.3rem;
+                }
+
+                #operater-manage {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+                }
+
+                #operater-manage .data-list {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 0.3rem;
+                    font-size: 0.6rem;
+                }
+
+                #devops-tools {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+                    grid-area: 5 / 2 / 6 / 7;
+                }
+
+                #devops-tools .data-list {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 0.3rem;
+                }
+
+                #project-execution-guide {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+                    grid-area: 6 / 3 / 7 / 7;
+                }
+
+                #project-execution-guide .data-list {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 0.3rem;
+                }
+
+                #service-navigator {
+                    grid-area: 6 / 7 / 7 / 8;
+                }
+            </style>
+        </template>
+
         <script>
-            const sideBtnTemp = document.querySelector("#template-row-header");
-            let y = 1;
+            const sdlcData = document.querySelector("#template-sdlc-framework-data");
+            const container = document.querySelector(`.${containerID}`);
 
-            RowContent.forEach(row => {
-                const modalBtn = new RowBtn(`.${mainContainerClass}`, sideBtnTemp);
-
-                modalBtn.setText(row.name);
-                modalBtn.setGrid(y, row.order);
-                modalBtn.setModalEvent('template-modal-process');
-
-                y += row.order;
-            })
+            container?.appendChild(sdlcData?.content.cloneNode(true));
         </script>
     </body>
 </html>
