@@ -69,13 +69,11 @@
             }
             
             #sdlc-framework-container {
-                padding: 0.8rem 1.3rem;
+                padding: 0.8rem 1.6rem;
 
                 font-family: 'Nanum Gothic', sans-serif;
             }
         </style>
-
-        <div id="content"></div>
 
         <!-- DATA INPUT -->
         <script>
@@ -255,37 +253,85 @@
                 }
             };
         </script>
-
+        
+        <template id="sdlc-header">
+            <div class="sdlc-header">
+                <div class="sdlc-logo">
+                    <p class="sdlc-title"><strong class="sdlc-title-big">SDLC</strong> framework</p>
+                    <p class="sdlc-sub-title">Software Development Life Cycle</p>
+                </div>
+            </div>
+        </template>
+        
         <style>
+            .sdlc-header {
+                display: flex;
+                flex-direction: row;
+        
+                padding: 0.3rem 1.6rem;
+                
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+        
+            .sdlc-logo {
+                display: flex;
+                flex-direction: column;
+        
+                margin: 0;
+                padding: 0;
+            }
+        
+            .sdlc-title {
+                margin: 0;
+        
+                font-weight: 400;
+                font-size: 2.8rem;
+            }
+            .sdlc-title-big {
+                font-size: 3.3rem;
+                font-weight: 650;
+            }
+        
+            .sdlc-sub-title {
+                margin: 0;
+                padding: 0 0.1rem;
+            }
+        
             .sdlc-legend-btn {
                 padding: 0.53rem;
-
+        
                 background-color: var(--doosan-main-color);
                 color: var(--white-color);
-
+        
                 border-radius: 0.4rem;
                 box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
-
+        
                 font-size: 0.8rem;
                 font-weight: bold;
             }
         </style>
 
+        <div id="content"></div>
+
         <script>
+            (() => {
+                const sdlcHeader = document.querySelector("#sdlc-header");
+                document.getElementById("content").appendChild(sdlcHeader.content.cloneNode(true));
+            })();
+
             const containerID = 'sdlc-framework-container';
             (() => {
-                const wordPressContent = document.getElementById("content");
+                const wordPressContent = document.querySelector(".sdlc-header");
                 const sdlcLegendList = document.createElement("div");
 
                 wordPressContent.style.display = "flex";
-                wordPressContent.style.flexDirection = "column";
                 wordPressContent.style.gap = "0.6rem";
 
                 sdlcLegendList.id = "sdlc-legend-list";
                 sdlcLegendList.style.display = "flex";
                 sdlcLegendList.style.flexDirection = "row";
                 sdlcLegendList.style.gap = "0.6rem";
-                sdlcLegendList.style.padding = "0 1.3rem";
                 sdlcLegendList.style.justifyContent = "flex-end";
 
                 Object.keys(systemLegend).forEach(key => {
@@ -1666,12 +1712,12 @@
                     display: flex;
                     flex-direction: column;
                     gap: 0.3rem;
-                    grid-area: 5 / 2 / 6 / 7;
+                    grid-area: 5 / 2 / 6 / 8;
                 }
 
                 #devops-tools .data-list {
                     display: grid;
-                    grid-template-columns: repeat(5, 1fr);
+                    grid-template-columns: repeat(7, 1fr);
                     gap: 0.3rem;
                 }
 
