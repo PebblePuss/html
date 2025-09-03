@@ -34,25 +34,20 @@
                 --black-color-medium    : #262626; /* 중간 검정 */
                 --black-color-deep      : #0d0d0d; /* 더 어두운 검정 */
 
-                /* 기존 Beige 계열 */
-                --beige-color           : #CEC495;
-                --beige-color-light     : #E3DDB8;
-                --beige-color-dark      : #A89F73;
+                --link-color            : #b2ceea;
+                --link-hover-color      : #669ed4;
 
-                /* 추가된 Beige 계열 */
-                --beige-color-medium    : #b8aa7a; /* 중간 베이지 */
-                --beige-color-deep      : #8f835e; /* 더 어두운 베이지 */
-                --beige-color-muted     : #d6cfa0; /* 부드러운 베이지 */
+                --multi-table-color     : #669ed4;
 
                 /* 조정된 Approval ~ SN 색상 */
-                --approval-doobuy-color : #e69500; /* 기존 #FAA300에서 조금 더 진하게 */
-                --hover-doobuy-color    : #ffb732; /* 기존 #FFC14D에서 조금 더 진하게 */
-                --approval-doobm-color  : #c25555; /* 기존 #D85F5F에서 조금 더 진하게 */
-                --hover-doobm-color     : #e66b6b; /* 기존 #FF8080에서 조금 더 진하게 */
-                --approval-epms-color   : #006b4f; /* 기존 #007F5F에서 조금 더 진하게 */
-                --hover-epms-color      : #00956b; /* 기존 #00A27F에서 조금 더 진하게 */
-                --approval-sn-color     : #2f54a3; /* 기존 #3965C5에서 조금 더 진하게 */
-                --hover-sn-color        : #4a73c4; /* 기존 #5A85E7에서 조금 더 진하게 */
+                --approval-doobuy-color : #F1d0a3; /* 기존 #FAA300에서 조금 더 진하게 */
+                --hover-doobuy-color    : #e6ac5e; /* 기존 #FFC14D에서 조금 더 진하게 */
+                --approval-doobm-color  : #e4b8b9; /* 기존 #D85F5F에서 조금 더 진하게 */
+                --hover-doobm-color     : #cf8383; /* 기존 #FF8080에서 조금 더 진하게 */
+                --approval-epms-color   : #9fbfb6; /* 기존 #007F5F에서 조금 더 진하게 */
+                --hover-epms-color      : #568F7F; /* 기존 #00A27F에서 조금 더 진하게 */
+                --approval-gp-color     : #A9B8D3; /* 기존 #3965C5에서 조금 더 진하게 */
+                --hover-gp-color        : #6783B1; /* 기존 #5A85E7에서 조금 더 진하게 */
             }
 
             .sdlc-framework-container * {
@@ -89,24 +84,28 @@
                     name: "DooBuy",
                     description: "두산 구매 시스템",
                     color: "var(--approval-doobuy-color)",
+                    hoverColor : "var(--hover-doobuy-color)",
                     icon: "fa-solid fa-credit-card"
                 },
                 doobm: {
                     name: "DooBM",
                     description: "두산 업무 관리 시스템",
                     color: "var(--approval-doobm-color)",
+                    hoverColor : "var(--hover-doobm-color)",
                     icon: "fa-solid fa-file"
                 },
                 epms: {
                     name: "EPMS",
                     description: "프로젝트 관리 시스템",
                     color: "var(--approval-epms-color)",
+                    hoverColor : "var(--hover-epms-color)",
                     icon: "fa-solid fa-diagram-project"
                 },
-                servicenavigator: {
-                    name: "ServiceNavigator",
-                    description: "서비스 관리 시스템",
-                    color: "var(--approval-sn-color)",
+                groupportal: {
+                    name: "Group Portal",
+                    description: "두산 그룹 포탈",
+                    color: "var(--approval-gp-color)",
+                    hoverColor : "var(--hover-gp-color)",
                     icon: "fa-solid fa-screwdriver-wrench"
                 }
             };
@@ -235,19 +234,19 @@
                         approval: [
                             {
                                 name: "장애훈련 계획/실적 보고",
-                                systemLegend: systemLegend.servicenavigator,
+                                systemLegend: systemLegend.groupportal,
                                 description: "장애 대응 훈련 계획 수립 및 실적 보고",
                                 required: true
                             },
                             {
                                 name: "IT서비스 결과보고",
-                                systemLegend: systemLegend.servicenavigator,
+                                systemLegend: systemLegend.groupportal,
                                 description: "IT 서비스 운영 결과 정기 보고",
                                 required: true
                             },
                             {
                                 name: "장애조치 결과보고",
-                                systemLegend: systemLegend.servicenavigator,
+                                systemLegend: systemLegend.groupportal,
                                 description: "시스템 장애 발생 시 조치 결과 보고",
                                 required: true
                             }
@@ -296,28 +295,39 @@
                     sdlcLegend.className = `sdlc-legend-btn`;
                     sdlcLegend.innerText = systemLegend[key].name;
                     sdlcLegend.style.backgroundColor = systemLegend[key].color;
+                    sdlcLegend.style.color = "var(--black-color)"
                     sdlcLegend.style.cursor = "pointer";
 
                     // Mouseover 이벤트 추가
                     sdlcLegend.addEventListener("mouseover", () => {
-                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name}`);
+                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name.toLowerCase().trim().replace(/\s+/g, '')}`);
+
+                        sdlcLegend.style.backgroundColor = `${systemLegend[key].hoverColor}`;
+                        sdlcLegend.style.color= `var(--white-color)`;
                         
                         // NodeList의 각 요소에 스타일 적용
                         approvalList.forEach(approval => {
                             approval.style.fontWeight = 'bold'; // 텍스트를 굵게
                             approval.style.transform = 'scale(1.07)'; // 약간 확대 효과
+                            approval.querySelector(".arrow").style.backgroundColor = `${systemLegend[key].hoverColor}`
+                            approval.querySelector(".arrow-box-text").style.color= `var(--white-color)`
                             approval.style.transition = 'all 0.3s ease'; // 부드러운 전환 효과
                         });
                     });
 
                     // Mouseout 이벤트 추가 (강조 효과 제거)
                     sdlcLegend.addEventListener("mouseout", () => {
-                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name}`);
+                        const approvalList = document.querySelectorAll(`.arrow-box.${systemLegend[key].name.toLowerCase().trim().replace(/\s+/g, '')}`);
                         
+                        sdlcLegend.style.backgroundColor = `${systemLegend[key].color}`;
+                        sdlcLegend.style.color= `var(--black-color)`;
+
                         // NodeList의 각 요소에 스타일 초기화
                         approvalList.forEach(approval => {
                             approval.style.fontWeight = ''; // 원래 굵기로 복원
                             approval.style.transform = ''; // 원래 크기로 복원
+                            approval.querySelector(".arrow").style.backgroundColor = `${systemLegend[key].color}`
+                            approval.querySelector(".arrow-box-text").style.color= `var(--black-color)`
                             approval.style.transition = ''; // 원래 전환 효과로 복원
                         });
                     });
@@ -423,7 +433,7 @@
 
                     padding: 1.8rem 1.3rem;
 
-                    min-width: 78%;
+                    min-width: 68%;
                     max-height: 75%; /* 최대 높이 설정 */
                     overflow-y: auto; /* 높이를 초과할 경우 스크롤 추가 */
 
@@ -746,7 +756,7 @@
 
                 line-height: 0.9rem;
 
-                color: var(--white-color);
+                color: var(--black-color);
                 font-weight: 535;
 
                 z-index: 2;
@@ -810,6 +820,7 @@
                             const process = new ArrowBox(`.${modalContainerID}`);
                             process.setText(processObject.name);
                             process.setTextSize("0.85rem");
+                            process.setColor("var(--gray-color)");
                             process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
                             startProcessColumn += 1;
                         });
@@ -912,8 +923,8 @@
                     // Modal Container 생성
                     const modalContainer = document.createElement("div");
                     const categoryFR = "0.7fr";
-                    const processFR = "1.3fr";
-                    const approvalFR = "1.8fr";
+                    const processFR = "1.38fr";
+                    const approvalFR = "1.97fr";
         
                     const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
                         return total + (sdlcStructure.columns[key].span || 0);
@@ -944,7 +955,8 @@
                         sdlcStructure.columns[categoryText].process.forEach(processObject => {
                             const process = new ArrowBox(`.${modalContainerID}`);
                             process.setText(processObject.name);
-                            process.setTextSize("0.85rem");
+                            process.setTextSize("0.896rem");
+                            process.setColor("var(--gray-color)")
                             process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
                             startProcessColumn += 1;
                         });
@@ -963,18 +975,41 @@
                         sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
                             const approval = new ArrowBox(`.modal-approval-${categoryText}-list`);
                             approval.setText(approvalObject.name);
-                            approval.setTextSize("0.68rem");
-                            approval.setColor(approvalObject.systemLegend.color); // Fix: Use systemLegend color
+                            approval.setTextSize("0.796rem");
+                            approval.setColor(approvalObject.systemLegend.hoverColor); // Fix: Use systemLegend color
+                            approval.element.querySelector(".arrow-box-text").style.color = "var(--white-color);"
                         });
         
                         startApprovalColumn += row;
                     });
+
+                    const sdlcLegendList = document.createElement("div");
+
+                    sdlcLegendList.id = "sdlc-legend-modal-list";
+                    sdlcLegendList.style.display = "flex";
+                    sdlcLegendList.style.flexDirection = "row";
+                    sdlcLegendList.style.gap = "0.6rem";
+                    sdlcLegendList.style.justifyContent = "flex-end";
+                    sdlcLegendList.style.gridArea = "4 / 1 / 5 / 7";
+
+                    Object.keys(systemLegend).forEach(key => {
+                        const sdlcLegend = document.createElement("div");
+
+                        sdlcLegend.id = `sdlc-legend-${systemLegend[key].name}`;
+                        sdlcLegend.className = `sdlc-legend-btn`;
+                        sdlcLegend.innerText = systemLegend[key].name;
+                        sdlcLegend.style.backgroundColor = systemLegend[key].hoverColor;
+
+                        sdlcLegendList.appendChild(sdlcLegend);
+                    });
+
+                    modalContainer.appendChild(sdlcLegendList);
         
                     // Approval 테이블 생성
                     const table = document.createElement("table");
                     table.style.borderCollapse = "collapse";
                     table.style.borderRadius = "0.4rem";
-                    table.style.gridArea = "4 / 1 / 5 / 7";
+                    table.style.gridArea = "5 / 1 / 6 / 7";
                     table.style.overflow = "hidden";
         
                     // 테이블 헤더 생성
@@ -1035,7 +1070,7 @@
                             } else {
                                 requiredCell.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
                             }
-                                                        requiredCell.style.border = "1px solid var(--gray-color-dark)";
+                            requiredCell.style.border = "1px solid var(--gray-color-dark)";
                             requiredCell.style.padding = "0.5rem 1rem";
                             requiredCell.style.textAlign = "center";
         
@@ -1085,19 +1120,33 @@
                 .fa-circle-xmark {
                     color: red;
                 }
+                .modal-approval-sales-list .arrow-box-text {
+                    color: var(--white-color);
+                }
+                .modal-approval-dev-list .arrow-box-text {
+                    color: var(--white-color);
+                }
+                .modal-approval-ops-list .arrow-box-text {
+                    color: var(--white-color);
+                }
             </style>
         </template>
 
         <!-- 절차 (Procedure) Modal -->
         <template id="template-modal-progress-body">
             <div class="modal-content">
-                <h2>절차 (Procedure)</h2>
-                <p>절차는 품질 관리를 수행하기 위해 따라야 하는 일련의 단계나 규칙을 의미합니다. 이는 품질 목표를 달성하기 위한 체계적이고 반복 가능한 방법을 제시합니다.</p>
-                <ul>
-                    <li><strong>품질 계획 (Quality Planning):</strong> 품질 목표와 성과 기준을 설정하고, 이를 달성하기 위한 전략과 자원을 배분하는 과정입니다.</li>
-                    <li><strong>품질 보증 (Quality Assurance):</strong> 계획된 활동과 체계를 통해 품질 목표가 달성되도록 보장하는 과정입니다. 이를 통해 예방적인 품질 관리가 이루어집니다.</li>
-                    <li><strong>품질 통제 (Quality Control):</strong> 실제 제품이나 서비스가 품질 기준을 충족하는지 확인하고, 불일치가 발생할 경우 이를 수정하는 과정입니다.</li>
+                <h2 class="modal-title">절차 (Procedure)</h2>
+                <p class="modal-description">절차는 품질 관리를 수행하기 위해 따라야 하는 일련의 단계나 규칙을 의미합니다. 이는 품질 목표를 달성하기 위한 체계적이고 반복 가능한 방법을 제시합니다.</p>
+                <ul class="modal-list">
+                    <li><strong class="highlight">품질 계획 (Quality Planning)</strong><br/> 품질 목표와 성과 기준을 설정하고, 이를 달성하기 위한 전략과 자원을 배분하는 과정입니다.</li>
+                    <li><strong class="highlight">품질 보증 (Quality Assurance):</strong><br/> 계획된 활동과 체계를 통해 품질 목표가 달성되도록 보장하는 과정입니다. 이를 통해 예방적인 품질 관리가 이루어집니다.</li>
+                    <li><strong class="highlight">품질 통제 (Quality Control):</strong><br/> 실제 제품이나 서비스가 품질 기준을 충족하는지 확인하고, 불일치가 발생할 경우 이를 수정하는 과정입니다.</li>
                 </ul>
+                <div class="link-container">
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
             </div>
 
             <style>
@@ -1105,40 +1154,89 @@
                     padding: 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
-                    color: var(--black-color);
+                    color: #000; /* 기본 검정색 */
                 }
 
-                h2 {
+                .modal-title {
                     font-size: 1.5rem;
                     margin-bottom: 1rem;
-                    color: var(--doosan-main-color);
+                    color: #0078D7; /* Doosan 메인 색상 */
                 }
 
-                ul {
-                    margin-top: 1rem;
+                .modal-description {
+                    margin-bottom: 1rem;
+                }
+
+                .modal-list {
                     padding-left: 1.5rem;
                 }
 
-                li {
+                .modal-list li {
                     margin-bottom: 0.5rem;
                 }
 
-                strong {
-                    color: var(--doosan-main-color-bk);
+                .highlight {
+                    color: #0055A4; /* Doosan 메인 색상 변형 */
+                }
+
+                .link-container {
+                    display: flex;
+
+                    width: 100%;
+
+                    justify-content: flex-end;
+                    align-items: center;
+                }
+
+                .icon-container {
+                    display: flex;
+
+                    align-items: center;
+                    justify-content: center;
+
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    text-align: center;
+                }
+
+                .icon-container i {
+                    font-size: 1.2rem;
+                }
+
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
                 }
             </style>
+            
+            <script>
+                document.querySelector('.icon-container').addEventListener('click', function () {
+                    const url = this.dataset.url; // data-url 속성에서 URL 가져오기
+                    if (url) {
+                        window.open(url, "_blank"); // 새 창에서 열기
+                    }
+                });
+            </script>
         </template>
 
         <!-- 도구 (Tool) Modal -->
         <template id="template-modal-tools-body">
             <div class="modal-content">
-                <h2>도구 (Tool)</h2>
-                <p>도구는 품질 관리 활동을 수행하는 데 사용되는 장비, 소프트웨어, 기술 등을 포함합니다. 이들은 데이터 수집, 분석, 시각화 등을 통해 품질 관리 효율성을 높입니다.</p>
-                <ul>
-                    <li><strong>통계적 프로세스 제어 (SPC) 소프트웨어:</strong> 제조 과정에서 품질을 통계적으로 모니터링하고 분석하는 도구입니다.</li>
-                    <li><strong>피드백 수집 도구:</strong> 고객이나 사용자로부터 피드백을 체계적으로 수집하고 분석하는 소프트웨어나 설문 도구입니다.</li>
-                    <li><strong>결함 추적 시스템:</strong> 제품이나 서비스의 결함이나 문제점을 기록하고 추적하는 소프트웨어입니다.</li>
+                <h2 class="modal-title">도구 (Tool)</h2>
+                <p class="modal-description">도구는 품질 관리 활동을 수행하는 데 사용되는 장비, 소프트웨어, 기술 등을 포함합니다. 이들은 데이터 수집, 분석, 시각화 등을 통해 품질 관리 효율성을 높입니다.</p>
+                <ul class="modal-list">
+                    <li><strong class="highlight">통계적 프로세스 제어 (SPC) 소프트웨어:</strong> 제조 과정에서 품질을 통계적으로 모니터링하고 분석하는 도구입니다.</li>
+                    <li><strong class="highlight">피드백 수집 도구:</strong> 고객이나 사용자로부터 피드백을 체계적으로 수집하고 분석하는 소프트웨어나 설문 도구입니다.</li>
+                    <li><strong class="highlight">결함 추적 시스템:</strong> 제품이나 서비스의 결함이나 문제점을 기록하고 추적하는 소프트웨어입니다.</li>
                 </ul>
+                <div class="link-container">
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
             </div>
 
             <style>
@@ -1146,40 +1244,89 @@
                     padding: 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
-                    color: var(--black-color);
+                    color: #000; /* 기본 검정색 */
                 }
 
-                h2 {
+                .modal-title {
                     font-size: 1.5rem;
                     margin-bottom: 1rem;
-                    color: var(--doosan-main-color);
+                    color: #0078D7; /* Doosan 메인 색상 */
                 }
 
-                ul {
-                    margin-top: 1rem;
+                .modal-description {
+                    margin-bottom: 1rem;
+                }
+
+                .modal-list {
                     padding-left: 1.5rem;
                 }
 
-                li {
+                .modal-list li {
                     margin-bottom: 0.5rem;
                 }
 
-                strong {
-                    color: var(--doosan-main-color-bk);
+                .highlight {
+                    color: #0055A4; /* Doosan 메인 색상 변형 */
+                }
+
+                .link-container {
+                    display: flex;
+
+                    width: 100%;
+
+                    justify-content: flex-end;
+                    align-items: center;
+                }
+
+                .icon-container {
+                    display: flex;
+
+                    align-items: center;
+                    justify-content: center;
+
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    text-align: center;
+                }
+
+                .icon-container i {
+                    font-size: 1.2rem;
+                }
+
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
                 }
             </style>
+
+            <script>
+                document.querySelector('.icon-container').addEventListener('click', function () {
+                    const url = this.dataset.url; // data-url 속성에서 URL 가져오기
+                    if (url) {
+                        window.open(url, "_blank"); // 새 창에서 열기
+                    }
+                });
+            </script>
         </template>
 
         <!-- 가이드 (Guide) Modal -->
         <template id="template-modal-guides-body">
             <div class="modal-content">
-                <h2>가이드 (Guide)</h2>
-                <p>가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.</p>
-                <ul>
-                    <li><strong>품질 관리 매뉴얼:</strong> 품질 관리 시스템의 전반적인 지침과 절차를 설명한 문서입니다.</li>
-                    <li><strong>베스트 프랙티스 지침:</strong> 특정 상황에서 품질 관리를 효과적으로 수행하기 위한 권장 행동이나 방법을 제시합니다.</li>
-                    <li><strong>품질 기준 및 표준:</strong> 조직 또는 산업 내에서 인정된 품질 수준을 정의하며, 이를 준수해야 합니다.</li>
+                <h2 class="modal-title">가이드 (Guide)</h2>
+                <p class="modal-description">가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.</p>
+                <ul class="modal-list">
+                    <li><strong class="highlight">품질 관리 매뉴얼</strong><br/> 품질 관리 시스템의 전반적인 지침과 절차를 설명한 문서입니다.</li>
+                    <li><strong class="highlight">베스트 프랙티스 지침</strong><br/> 특정 상황에서 품질 관리를 효과적으로 수행하기 위한 권장 행동이나 방법을 제시합니다.</li>
+                    <li><strong class="highlight">품질 기준 및 표준</strong><br/> 조직 또는 산업 내에서 인정된 품질 수준을 정의하며, 이를 준수해야 합니다.</li>
                 </ul>
+                <div class="link-container">
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
             </div>
 
             <style>
@@ -1187,28 +1334,72 @@
                     padding: 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
-                    color: var(--black-color);
+                    color: #000; /* 기본 검정색 */
                 }
 
-                h2 {
+                .modal-title {
                     font-size: 1.5rem;
                     margin-bottom: 1rem;
-                    color: var(--doosan-main-color);
+                    color: #0078D7; /* Doosan 메인 색상 */
                 }
 
-                ul {
-                    margin-top: 1rem;
+                .modal-description {
+                    margin-bottom: 1rem;
+                }
+
+                .modal-list {
                     padding-left: 1.5rem;
                 }
 
-                li {
+                .modal-list li {
                     margin-bottom: 0.5rem;
                 }
 
-                strong {
-                    color: var(--doosan-main-color-bk);
+                .highlight {
+                    color: #0055A4; /* Doosan 메인 색상 변형 */
+                }
+
+                .link-container {
+                    display: flex;
+
+                    width: 100%;
+
+                    justify-content: flex-end;
+                    align-items: center;
+                }
+
+                .icon-container {
+                    display: flex;
+
+                    align-items: center;
+                    justify-content: center;
+
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    text-align: center;
+                }
+
+                .icon-container i {
+                    font-size: 1.2rem;
+                }
+
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
                 }
             </style>
+
+            <script>
+                document.querySelector('.icon-container').addEventListener('click', function () {
+                    const url = this.dataset.url; // data-url 속성에서 URL 가져오기
+                    if (url) {
+                        window.open(url, "_blank"); // 새 창에서 열기
+                    }
+                });
+            </script>
         </template>
 
         <!-- UTIL FUNCTION -->
@@ -1246,6 +1437,7 @@
                         process.setText(processObject.name);
                         process.setTextSize("1.15rem")
                         process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
+                        process.setColor("var(--gray-color)");
 
                         startProcessColumn += 1;
                     });
@@ -1268,7 +1460,7 @@
                         approval.setText(approvalObject.name);
                         approval.setTextSize("0.85rem");
                         approval.setColor(approvalObject.systemLegend.color);
-                        approval.element.className += ` ` + approvalObject.systemLegend.name
+                        approval.element.className += ` ` + approvalObject.systemLegend.name.toLowerCase().trim().replace(/\s+/g, '');
                     });
 
                     startApprovalColumn += row;
@@ -1368,8 +1560,6 @@
                     padding: 0.8rem;
                     width: 100%;
                     height: 100%;
-                    background-color: var(--black-color); /* 기본 밝은 베이지 배경 */
-                    color: var(--white-color); /* 어두운 검정 텍스트 */
                     border-radius: 0.4rem;
                     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
                     font-size: 1.25rem;
@@ -1379,18 +1569,18 @@
                 }
 
                 .linkBtn:hover {
-                    background-color: var(--beige-color); /* Hover 시 기본 베이지 배경 */
                     transform: translateY(-0.2rem); /* 살짝 떠오르는 효과 */
                 }
 
                 /* VRB, CRB, PRB: 블랙 계열 배경 */
                 #vrb, #crb, #prb {
-                    background-color: var(--black-color); /* 블랙 배경 */
-                    color: var(--white-color); /* 흰색 텍스트 */
+                    background-color: var(--link-hover-color); /* 블랙 배경 */
+                    color: var(--black-color); /* 흰색 텍스트 */
                 }
 
                 #vrb:hover, #crb:hover, #prb:hover {
-                    background-color: var(--black-color-dark); /* Hover 시 더 어두운 블랙 */
+                    background-color: var(--doosan-main-color); /* Hover 시 더 어두운 블랙 */
+                    color: var(--white-color);
                 }
 
                 /* MultiLinkBtn: 다크 베이지 배경 */
@@ -1399,7 +1589,7 @@
                     flex-direction: column;
                     gap: 0.8rem;
                     padding: 1rem;
-                    background-color: var(--beige-color-dark); /* 다크 베이지 배경 */
+                    background-color: var(--link-color); /* 다크 베이지 배경 */
                     border-radius: 0.6rem;
                     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
                 }
@@ -1408,21 +1598,21 @@
                     margin: 0;
                     font-size: 1.15rem;
                     font-weight: bold;
-                    color: var(--black-color-dark); /* 어두운 검정 텍스트 */
+                    color: var(--black-color); /* 어두운 검정 텍스트 */
                 }
 
                 /* MultiLinkBtn 내부 linkBtn */
                 .multiLinkBtn .linkBtn {
                     padding: 0.6rem;
-                    background-color: var(--black-color); /* 기본 밝은 베이지 배경 */
-                    color: var(--white-color); /* 어두운 검정 텍스트 */
+                    background-color: var(--link-hover-color); /* 기본 밝은 베이지 배경 */
+                    color: var(--black-color); /* 어두운 검정 텍스트 */
                     font-size: 1rem;
                     font-weight: 500;
                 }
 
                 .multiLinkBtn .linkBtn:hover {
-                    background-color: var(--black-color-medium); /* Hover 시 기본 베이지 배경 */
-                    color: var(--white-color); /* 텍스트를 더 어둡게 */
+                    background-color: var(--doosan-main-color); /* Hover 시 기본 베이지 배경 */
+                    color: var(--white-color);
                     transform: translateY(-0.1rem); /* 살짝 떠오르는 효과 */
                 }
 
