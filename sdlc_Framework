@@ -73,6 +73,10 @@
 
                 font-family: 'Nanum Gothic', sans-serif;
             }
+
+            footer[id="colophon"] {
+                display: none;
+            }
         </style>
 
         <!-- DATA INPUT -->
@@ -1021,7 +1025,7 @@
                         sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
                             const approval = new ArrowBox(`.modal-approval-${categoryText}-list`);
                             approval.setText(approvalObject.name);
-                            approval.setTextSize("0.796rem");
+                            approval.setTextSize("0.696rem");
                             approval.setColor(approvalObject.systemLegend.hoverColor); // Fix: Use systemLegend color
                             approval.element.querySelector(".arrow-box-text").style.color = "var(--white-color);"
                         });
@@ -1076,16 +1080,8 @@
                     descriptionHeader.style.backgroundColor = "var(--gray-color)";
                     descriptionHeader.style.textAlign = "left";
         
-                    const requiredHeader = document.createElement("th");
-                    requiredHeader.textContent = "필수 여부";
-                    requiredHeader.style.border = "1px solid var(--gray-color-dark)";
-                    requiredHeader.style.padding = "0.5rem 1rem";
-                    requiredHeader.style.backgroundColor = "var(--gray-color)";
-                    requiredHeader.style.textAlign = "left";
-        
                     headerRow.appendChild(nameHeader);
                     headerRow.appendChild(descriptionHeader);
-                    headerRow.appendChild(requiredHeader);
                     thead.appendChild(headerRow);
                     table.appendChild(thead);
         
@@ -1108,21 +1104,8 @@
                             descriptionCell.style.border = "1px solid var(--gray-color-dark)";
                             descriptionCell.style.padding = "0.5rem 1rem";
         
-                            const requiredCell = document.createElement("td");
-                            if (typeof approval.required === "string") {
-                                requiredCell.innerHTML = `<i class='fa-solid fa-circle-check'></i><br/>(${approval.required})`;
-                            } else if (approval.required === true) {
-                                requiredCell.innerHTML = "<i class='fa-solid fa-circle-check'></i>";
-                            } else {
-                                requiredCell.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
-                            }
-                            requiredCell.style.border = "1px solid var(--gray-color-dark)";
-                            requiredCell.style.padding = "0.5rem 1rem";
-                            requiredCell.style.textAlign = "center";
-        
                             row.appendChild(nameCell);
                             row.appendChild(descriptionCell);
-                            row.appendChild(requiredCell);
                             tbody.appendChild(row);
                         });
                     });
@@ -1182,12 +1165,37 @@
         <template id="template-modal-progress-body">
             <div class="modal-content">
                 <h2 class="modal-title">절차 (Procedure)</h2>
-                <p class="modal-description">절차는 품질 관리를 수행하기 위해 따라야 하는 일련의 단계나 규칙을 의미합니다. 이는 품질 목표를 달성하기 위한 체계적이고 반복 가능한 방법을 제시합니다.</p>
+                <p class="modal-description">
+                    SDLC의 절차는 프로젝트를 체계적으로 관리하고 품질을 확보하기 위한 단계별 활동과 검토 체계를 의미합니다.
+                </p>
                 <ul class="modal-list">
-                    <li><strong class="highlight">품질 계획 (Quality Planning)</strong><br/> 품질 목표와 성과 기준을 설정하고, 이를 달성하기 위한 전략과 자원을 배분하는 과정입니다.</li>
-                    <li><strong class="highlight">품질 보증 (Quality Assurance):</strong><br/> 계획된 활동과 체계를 통해 품질 목표가 달성되도록 보장하는 과정입니다. 이를 통해 예방적인 품질 관리가 이루어집니다.</li>
-                    <li><strong class="highlight">품질 통제 (Quality Control):</strong><br/> 실제 제품이나 서비스가 품질 기준을 충족하는지 확인하고, 불일치가 발생할 경우 이를 수정하는 과정입니다.</li>
+                    <li>
+                        <strong class="highlight">품질 계획 (Quality Planning):</strong><br />
+                        품질 목표와 성과 기준을 설정하고, 이를 달성하기 위한 전략과 자원을 배분
+                    </li>
+                    <li>
+                        <strong class="highlight">품질 보증 (Quality Assurance):</strong><br />
+                        계획된 활동과 체계를 통해 품질 목표가 달성되도록 보장하는 과정. 예방적인 품질 관리
+                    </li>
+                    <li>
+                        <strong class="highlight">품질 통제 (Quality Control):</strong><br />
+                        실제 제품이나 서비스가 품질 기준을 충족하는지 확인하고, 불일치가 발생할 경우 이를 수정
+                    </li>
                 </ul>
+                <div class="tab-section">
+                    <h3 class="modal-subtitle">검토 회의체:</h3>
+                    <ul class="modal-list">
+                        <li><strong class="highlight">VRB (Validation Review Board):</strong> 요구사항 및 설계 검토</li>
+                        <li><strong class="highlight">CRB (Change Review Board):</strong> 변경사항 관리</li>
+                        <li><strong class="highlight">PRB (Project Review Board):</strong> 프로젝트 전체 진행 상황 점검</li>
+                    </ul>
+                    <h3 class="modal-subtitle">프로젝트 관리 단계:</h3>
+                    <ul class="modal-list">
+                        <li><strong class="highlight">계획:</strong> 목표 설정, 일정 수립, 자원 배분</li>
+                        <li><strong class="highlight">통제:</strong> 진행 상황 모니터링, 리스크 관리</li>
+                        <li><strong class="highlight">종료:</strong> 결과 평가, 문서화, 인수인계</li>
+                    </ul>
+                </div>
                 <div class="link-container">
                     <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
                         <i class="fa-solid fa-link"></i>
@@ -1225,21 +1233,30 @@
                     color: #0055A4; /* Doosan 메인 색상 변형 */
                 }
 
+                /* 추가된 소제목 스타일 */
+                .modal-subtitle {
+                    font-size: 1.2rem;
+                    margin: 1rem 0 0.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                }
+
+                /* 들여쓰기 스타일 */
+                .tab-section {
+                    padding-left: 2rem; /* 들여쓰기 추가 */
+                }
+
                 .link-container {
                     display: flex;
-
                     width: 100%;
-
                     justify-content: flex-end;
                     align-items: center;
                 }
 
                 .icon-container {
                     display: flex;
-
                     align-items: center;
                     justify-content: center;
-
                     width: 40px;
                     height: 40px;
                     border-radius: 50%;
@@ -1271,13 +1288,25 @@
         <!-- 도구 (Tool) Modal -->
         <template id="template-modal-tools-body">
             <div class="modal-content">
-                <h2 class="modal-title">도구 (Tool)</h2>
-                <p class="modal-description">도구는 품질 관리 활동을 수행하는 데 사용되는 장비, 소프트웨어, 기술 등을 포함합니다. 이들은 데이터 수집, 분석, 시각화 등을 통해 품질 관리 효율성을 높입니다.</p>
-                <ul class="modal-list">
-                    <li><strong class="highlight">통계적 프로세스 제어 (SPC) 소프트웨어:</strong> 제조 과정에서 품질을 통계적으로 모니터링하고 분석하는 도구입니다.</li>
-                    <li><strong class="highlight">피드백 수집 도구:</strong> 고객이나 사용자로부터 피드백을 체계적으로 수집하고 분석하는 소프트웨어나 설문 도구입니다.</li>
-                    <li><strong class="highlight">결함 추적 시스템:</strong> 제품이나 서비스의 결함이나 문제점을 기록하고 추적하는 소프트웨어입니다.</li>
-                </ul>
+                <h2 class="modal-title">도구 (Tools)</h2>
+                <p class="modal-description">
+                    SDLC의 각 단계에서 업무를 효율적으로 수행하기 위해 사용하는 소프트웨어, 기술 등을 의미합니다.
+                </p>
+                <div class="tab-section">
+                    <h3 class="modal-subtitle">DevOps 기반 도구:</h3>
+                    <ul class="modal-list">
+                        <li><strong class="highlight">Jira:</strong> 이슈 및 작업 관리</li>
+                        <li><strong class="highlight">Confluence:</strong> 문서 협업 및 지식 관리</li>
+                        <li><strong class="highlight">GitLab:</strong> 소스코드 버전 관리 및 CI/CD</li>
+                        <li><strong class="highlight">Codesinsight:</strong> 코드 품질 및 보안 점검</li>
+                        <li><strong class="highlight">Whatap:</strong> 성능 모니터링</li>
+                        <li><strong class="highlight">N8n:</strong> 워크플로우 자동화</li>
+                        <li><strong class="highlight">Office 365:</strong> 문서 작성 및 커뮤니케이션</li>
+                    </ul>
+                    <p class="modal-description">
+                        이 도구들은 개발, 테스트, 운영 전반에 걸쳐 협업과 품질 향상을 지원하며, DDI의 디지털 개발 환경을 구성하는 핵심 요소입니다.
+                    </p>
+                </div>
                 <div class="link-container">
                     <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
                         <i class="fa-solid fa-link"></i>
@@ -1315,21 +1344,30 @@
                     color: #0055A4; /* Doosan 메인 색상 변형 */
                 }
 
+                /* 추가된 소제목 스타일 */
+                .modal-subtitle {
+                    font-size: 1.2rem;
+                    margin: 1rem 0 0.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                }
+
+                /* 들여쓰기 스타일 */
+                .tab-section {
+                    padding-left: 2rem; /* 들여쓰기 추가 */
+                }
+
                 .link-container {
                     display: flex;
-
                     width: 100%;
-
                     justify-content: flex-end;
                     align-items: center;
                 }
 
                 .icon-container {
                     display: flex;
-
                     align-items: center;
                     justify-content: center;
-
                     width: 40px;
                     height: 40px;
                     border-radius: 50%;
@@ -1362,12 +1400,22 @@
         <template id="template-modal-guides-body">
             <div class="modal-content">
                 <h2 class="modal-title">가이드 (Guide)</h2>
-                <p class="modal-description">가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.</p>
-                <ul class="modal-list">
-                    <li><strong class="highlight">품질 관리 매뉴얼</strong><br/> 품질 관리 시스템의 전반적인 지침과 절차를 설명한 문서입니다.</li>
-                    <li><strong class="highlight">베스트 프랙티스 지침</strong><br/> 특정 상황에서 품질 관리를 효과적으로 수행하기 위한 권장 행동이나 방법을 제시합니다.</li>
-                    <li><strong class="highlight">품질 기준 및 표준</strong><br/> 조직 또는 산업 내에서 인정된 품질 수준을 정의하며, 이를 준수해야 합니다.</li>
-                </ul>
+                <p class="modal-description">
+                    가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.
+                </p>
+                <div class="tab-section">
+                    <h3 class="modal-subtitle">프로젝트 수행 가이드 항목:</h3>
+                    <ul class="modal-list">
+                        <li><strong class="highlight">내부 인력 선투입:</strong> 프로젝트 초기 단계에서 필요한 내부 인력을 미리 투입하여 준비를 강화</li>
+                        <li><strong class="highlight">구매관리 규정:</strong> 구매 절차와 관련된 규정을 준수하여 효율적인 자원 관리를 보장</li>
+                        <li><strong class="highlight">개인정보 침해 방지:</strong> 개인정보 보호법을 준수하고, 데이터 보안을 강화</li>
+                        <li><strong class="highlight">성능 점검 기준:</strong> 시스템 성능을 평가하고, 기준을 충족하도록 점검</li>
+                        <li><strong class="highlight">오픈소스 사용 점검:</strong> 오픈소스 라이선스를 검토하고, 적절히 사용</li>
+                        <li><strong class="highlight">시스템 중요도 평가:</strong> 시스템의 중요도를 평가하여 우선순위를 설정</li>
+                        <li><strong class="highlight">위험 분석 및 대응 방안 수립:</strong> 프로젝트 위험 요소를 분석하고, 대응 방안을 마련</li>
+                        <li><strong class="highlight">정보보안 점검:</strong> 정보보안 정책을 준수하고, 보안 점검을 수행</li>
+                    </ul>
+                </div>
                 <div class="link-container">
                     <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
                         <i class="fa-solid fa-link"></i>
@@ -1405,21 +1453,30 @@
                     color: #0055A4; /* Doosan 메인 색상 변형 */
                 }
 
+                /* 추가된 소제목 스타일 */
+                .modal-subtitle {
+                    font-size: 1.2rem;
+                    margin: 1rem 0 0.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                }
+
+                /* 들여쓰기 스타일 */
+                .tab-section {
+                    padding-left: 2rem; /* 들여쓰기 추가 */
+                }
+
                 .link-container {
                     display: flex;
-
                     width: 100%;
-
                     justify-content: flex-end;
                     align-items: center;
                 }
 
                 .icon-container {
                     display: flex;
-
                     align-items: center;
                     justify-content: center;
-
                     width: 40px;
                     height: 40px;
                     border-radius: 50%;
@@ -1745,6 +1802,57 @@
             const container = document.querySelector(`.${containerID}`);
 
             container?.appendChild(sdlcData?.content.cloneNode(true));
+        </script>
+
+        <template id="template-footer">
+            <footer id="sdlc-footer">
+                <div id="sdlc-page-info">
+                    <p>Managed by: DDI QM Team</p>
+                    <p>Posted on: September 8, 2025</p>
+                    <p>Version: 1.0</p>
+                </div>
+                <div id="sdlc-page-copyright">
+                    <copyright>© 2025 Doosan Digital Innovation. All rights reserved.</copyright>
+                </div>
+            </footer>
+        </template>
+
+        <style>
+            /* 푸터 스타일 */
+            #sdlc-footer {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 2rem;
+
+                padding: 1.5rem 4rem;
+
+                align-items: end;
+
+                background-color: #7A7A7A;
+                color: var(--white-color);
+            }
+
+            #sdlc-footer p {
+                margin: 0;
+
+                font-size: 1rem;
+                line-height: 1.8rem;
+            }
+
+            #sdlc-page-info {
+                font-size: 1.1rem;
+                line-height: 2rem;
+            }
+
+            #sdlc-page-copyright {
+                text-align: right;
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
+        </style>
+        
+        <script>
+            document.getElementById("content").appendChild(document.getElementById("template-footer").content.cloneNode(true));
         </script>
     </body>
 </html>
