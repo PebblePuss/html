@@ -391,8 +391,8 @@
             (() => {
                 const container = document.createElement('div');
                 const categoryFR = "0.2fr";
-                const processFR = "0.34fr";
-                const approvalFR = "0.4fr";
+                const processFR = "0.3fr";
+                const approvalFR = "0.33fr";
                 const rowHeaderFR = "0.6fr";
 
                 container.id = containerID
@@ -833,6 +833,15 @@
         </svg>
 
         <template id="template-modal-process-body">
+            <div class="title-container">
+                <h2 class="modal-title">진행 (Process)</h2>
+                <div class="link-container">
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/x/zIKsBw" onclick="window.open(this.dataset.url, '_blank')">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
+            </div>
+
             <script>        
                 (() => {
                     const modalContainerID = "modal-container";
@@ -964,197 +973,301 @@
                     background-color: var(--gray-color-light);
                 }
             </style>
+            <style>
+                /* 제목과 링크를 한 줄에 배치하는 컨테이너 */
+                .title-container {
+                    display: flex; /* 제목과 링크를 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 1rem; /* 제목과 링크 사이 간격 */
+                    padding: 0.5rem 0; /* 위아래 여백 */
+                }
+            
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                    margin: 0 0 16px 0;
+                }
+            
+                /* 링크 컨테이너 스타일 */
+                .link-container {
+                    display: flex; /* 텍스트와 아이콘을 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 0.5rem; /* 텍스트와 아이콘 사이 간격 */
+                }
+            
+                /* 텍스트 스타일 */
+                .link-text {
+                    font-size: 1rem;
+                    color: #000; /* 기본 검정색 */
+                    font-weight: bold;
+                    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+                }
+            
+                /* 아이콘 컨테이너 스타일 */
+                .icon-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px; /* 아이콘 크기 조정 */
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+                }
+            
+                /* 아이콘 스타일 */
+                .icon-container i {
+                    font-size: 1rem;
+                }
+            
+                /* 호버 효과 */
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    transform: scale(1.1); /* 살짝 확대 */
+                }
+            
+                /* 클릭 시 효과 */
+                .icon-container:active {
+                    transform: scale(1); /* 클릭 시 원래 크기로 */
+                }
+            </style>
         </template>
-
+        
         <template id="template-modal-approval-body">
-            <script>
-                (() => {
-                    const modalContainerID = "modal-container";
-                    // Modal Container 생성
-                    const modalContainer = document.createElement("div");
-                    const categoryFR = "0.7fr";
-                    const processFR = "1.38fr";
-                    const approvalFR = "1.97fr";
+            <div class="title-container">
+                <h2 class="modal-title">품의 (Approval)</h2>
+                <div class="link-container">
+                    <span class="link-text">전사 위임전결 규정 :</span>
+                    <div class="icon-container" data-url="https://doosan.sharepoint.com/:f:/r/sites/rule-policy/Shared%20Documents/Management%20Support/MS11.%20Control?csf=1&web=1&e=2sdfCx" onclick="window.open(this.dataset.url, '_blank')">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-container" class="modal-container">
+                <!-- Category 및 Process 설정 -->
+                <script>
+                    (() => {
+                        const modalContainerID = "modal-container";
+                        const modalContainer = document.querySelector(`#${modalContainerID}`);
+                        const categoryFR = "0.7fr";
+                        const processFR = "1.38fr";
+                        const approvalFR = "1.97fr";
         
-                    const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
-                        return total + (sdlcStructure.columns[key].span || 0);
-                    }, 0);
+                        const totalProcess = Object.keys(sdlcStructure.columns).reduce((total, key) => {
+                            return total + (sdlcStructure.columns[key].span || 0);
+                        }, 0);
         
-                    modalContainer.className = modalContainerID;
-                    modalContainer.id = modalContainerID;
-                    modalContainer.style.display = "grid";
-                    modalContainer.style.gridTemplateColumns = `1.3fr repeat(${totalProcess - 2}, 1fr) 1.7fr`;
-                    modalContainer.style.gridTemplateRows = `${categoryFR} ${processFR} ${approvalFR}`;
-                    modalContainer.style.gap = "0.83rem 0.6rem";
+                        modalContainer.style.display = "grid";
+                        modalContainer.style.gridTemplateColumns = `1.3fr repeat(${totalProcess - 2}, 1fr) 1.7fr`;
+                        modalContainer.style.gridTemplateRows = `${categoryFR} ${processFR} ${approvalFR}`;
+                        modalContainer.style.gap = "0.83rem 0.6rem";
         
-                    document.querySelector(".modal-body").appendChild(modalContainer);
+                        let startCategoryColumn = 1;
+                        let startProcessColumn = 1;
+                        let startApprovalColumn = 1;
         
-                    let startCategoryColumn = 1;
-                    let startProcessColumn = 1;
-                    let startApprovalColumn = 1;
+                        Object.keys(sdlcStructure.columns).forEach(categoryText => {
+                            const category = new Category(`.${modalContainerID}`);
+                            const row = sdlcStructure.columns[categoryText].span;
         
-                    // Category 및 Process 설정
-                    Object.keys(sdlcStructure.columns).forEach(categoryText => {
-                        const category = new Category(`.${modalContainerID}`);
-                        const row = sdlcStructure.columns[categoryText].span;
+                            category.setText(categoryText);
+                            category.setGrid('1/2', `${startCategoryColumn}/${startCategoryColumn + row}`);
+                            startCategoryColumn += row;
         
-                        category.setText(categoryText);
-                        category.setGrid('1/2', `${startCategoryColumn}/${startCategoryColumn + row}`);
-                        startCategoryColumn += row;
+                            sdlcStructure.columns[categoryText].process.forEach(processObject => {
+                                const process = new ArrowBox(`.${modalContainerID}`);
+                                process.setText(processObject.name);
+                                process.setTextSize("0.896rem");
+                                process.setColor("var(--gray-color)");
+                                process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
+                                startProcessColumn += 1;
+                            });
         
-                        sdlcStructure.columns[categoryText].process.forEach(processObject => {
-                            const process = new ArrowBox(`.${modalContainerID}`);
-                            process.setText(processObject.name);
-                            process.setTextSize("0.896rem");
-                            process.setColor("var(--gray-color)")
-                            process.setGrid('2/3', `${startProcessColumn} / ${startProcessColumn + 1}`);
-                            startProcessColumn += 1;
+                            const approvalList = document.createElement("div");
+                            approvalList.className = `modal-approval-${categoryText}-list`;
+                            approvalList.style.display = "flex";
+                            approvalList.style.flexDirection = "row";
+                            approvalList.style.gap = "0.2rem";
+                            approvalList.style.gridColumn = `${startApprovalColumn} / ${startApprovalColumn + row}`;
+                            approvalList.style.gridRow = "3/4";
+        
+                            modalContainer.appendChild(approvalList);
+        
+                            sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
+                                const approval = new ArrowBox(`.modal-approval-${categoryText}-list`);
+                                approval.setText(approvalObject.name);
+                                approval.setTextSize("0.696rem");
+                                approval.setColor(approvalObject.systemLegend.hoverColor);
+                                approval.element.querySelector(".arrow-box-text").style.color = "var(--white-color);";
+                            });
+        
+                            startApprovalColumn += row;
                         });
         
-                        // Approval Arrow 설정
-                        const approvalList = document.createElement("div");
-                        approvalList.className = `modal-approval-${categoryText}-list`;
-                        approvalList.style.display = "flex";
-                        approvalList.style.flexDirection = "row";
-                        approvalList.style.gap = "0.2rem";
-                        approvalList.style.gridColumn = `${startApprovalColumn} / ${startApprovalColumn + row}`;
-                        approvalList.style.gridRow = "3/4";
+                        const sdlcLegendList = document.createElement("div");
+                        sdlcLegendList.id = "sdlc-legend-modal-list";
+                        sdlcLegendList.style.display = "flex";
+                        sdlcLegendList.style.flexDirection = "row";
+                        sdlcLegendList.style.gap = "0.6rem";
+                        sdlcLegendList.style.justifyContent = "flex-end";
+                        sdlcLegendList.style.gridArea = "4 / 1 / 5 / 7";
         
-                        modalContainer.appendChild(approvalList);
+                        Object.keys(systemLegend).forEach(key => {
+                            const sdlcLegend = document.createElement("div");
+                            sdlcLegend.id = `sdlc-legend-${systemLegend[key].name}`;
+                            sdlcLegend.className = `sdlc-legend-btn`;
+                            sdlcLegend.innerText = systemLegend[key].name;
+                            sdlcLegend.style.backgroundColor = systemLegend[key].hoverColor;
         
-                        sdlcStructure.columns[categoryText].approval.forEach(approvalObject => {
-                            const approval = new ArrowBox(`.modal-approval-${categoryText}-list`);
-                            approval.setText(approvalObject.name);
-                            approval.setTextSize("0.696rem");
-                            approval.setColor(approvalObject.systemLegend.hoverColor); // Fix: Use systemLegend color
-                            approval.element.querySelector(".arrow-box-text").style.color = "var(--white-color);"
+                            sdlcLegendList.appendChild(sdlcLegend);
                         });
         
-                        startApprovalColumn += row;
-                    });
-
-                    const sdlcLegendList = document.createElement("div");
-
-                    sdlcLegendList.id = "sdlc-legend-modal-list";
-                    sdlcLegendList.style.display = "flex";
-                    sdlcLegendList.style.flexDirection = "row";
-                    sdlcLegendList.style.gap = "0.6rem";
-                    sdlcLegendList.style.justifyContent = "flex-end";
-                    sdlcLegendList.style.gridArea = "4 / 1 / 5 / 7";
-
-                    Object.keys(systemLegend).forEach(key => {
-                        const sdlcLegend = document.createElement("div");
-
-                        sdlcLegend.id = `sdlc-legend-${systemLegend[key].name}`;
-                        sdlcLegend.className = `sdlc-legend-btn`;
-                        sdlcLegend.innerText = systemLegend[key].name;
-                        sdlcLegend.style.backgroundColor = systemLegend[key].hoverColor;
-
-                        sdlcLegendList.appendChild(sdlcLegend);
-                    });
-
-                    modalContainer.appendChild(sdlcLegendList);
+                        modalContainer.appendChild(sdlcLegendList);
+                    })();
+                </script>
         
-                    // Approval 테이블 생성
-                    const table = document.createElement("table");
-                    table.style.borderCollapse = "collapse";
-                    table.style.borderRadius = "0.4rem";
-                    table.style.gridArea = "5 / 1 / 6 / 7";
-                    table.style.overflow = "hidden";
+                <!-- Approval 테이블 -->
+                <table id="approval-tb">
+                    <thead>
+                        <tr>
+                            <th>품의 명</th>
+                            <th>설명</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <script>
+                            (() => {
+                                const tbody = document.querySelector("table tbody");
         
-                    // 테이블 헤더 생성
-                    const thead = document.createElement("thead");
-                    const headerRow = document.createElement("tr");
+                                Object.keys(sdlcStructure.columns).forEach(categoryKey => {
+                                    const category = sdlcStructure.columns[categoryKey];
         
-                    const nameHeader = document.createElement("th");
-                    nameHeader.textContent = "품의 명";
-                    nameHeader.style.border = "1px solid var(--gray-color-dark)";
-                    nameHeader.style.padding = "0.5rem 1rem";
-                    nameHeader.style.backgroundColor = "var(--gray-color)";
-                    nameHeader.style.textAlign = "left";
+                                    category.approval.forEach(approval => {
+                                        const row = document.createElement("tr");
         
-                    const descriptionHeader = document.createElement("th");
-                    descriptionHeader.textContent = "설명";
-                    descriptionHeader.style.border = "1px solid var(--gray-color-dark)";
-                    descriptionHeader.style.padding = "0.5rem 1rem";
-                    descriptionHeader.style.backgroundColor = "var(--gray-color)";
-                    descriptionHeader.style.textAlign = "left";
+                                        const nameCell = document.createElement("td");
+                                        nameCell.textContent = approval.name;
         
-                    headerRow.appendChild(nameHeader);
-                    headerRow.appendChild(descriptionHeader);
-                    thead.appendChild(headerRow);
-                    table.appendChild(thead);
+                                        const descriptionCell = document.createElement("td");
+                                        descriptionCell.textContent = approval.description;
         
-                    // 테이블 바디 생성
-                    const tbody = document.createElement("tbody");
-        
-                    Object.keys(sdlcStructure.columns).forEach(categoryKey => {
-                        const category = sdlcStructure.columns[categoryKey];
-        
-                        category.approval.forEach(approval => {
-                            const row = document.createElement("tr");
-        
-                            const nameCell = document.createElement("td");
-                            nameCell.textContent = approval.name;
-                            nameCell.style.border = "1px solid var(--gray-color-dark)";
-                            nameCell.style.padding = "0.5rem 1rem";
-        
-                            const descriptionCell = document.createElement("td");
-                            descriptionCell.textContent = approval.description;
-                            descriptionCell.style.border = "1px solid var(--gray-color-dark)";
-                            descriptionCell.style.padding = "0.5rem 1rem";
-        
-                            row.appendChild(nameCell);
-                            row.appendChild(descriptionCell);
-                            tbody.appendChild(row);
-                        });
-                    });
-        
-                    table.appendChild(tbody);
-                    modalContainer.appendChild(table);
-                })();
-            </script>
+                                        row.appendChild(nameCell);
+                                        row.appendChild(descriptionCell);
+                                        tbody.appendChild(row);
+                                    });
+                                });
+                            })();
+                        </script>
+                    </tbody>
+                </table>
+            </div>
         
             <style>
-                table {
-                    width: 100%;
+                /* 제목과 링크를 한 줄에 배치하는 컨테이너 */
+                .title-container {
+                    display: flex; /* 제목과 링크를 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 1rem; /* 제목과 링크 사이 간격 */
+                    padding: 0.5rem 0; /* 위아래 여백 */
+                }
+
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    color: var(--doosan-main-color);
+                    font-weight: bold;
+                    margin: 0; /* 제목의 기본 여백 제거 */
+                }
+
+                /* 링크 컨테이너 스타일 */
+                .link-container {
+                    display: flex; /* 텍스트와 아이콘을 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 0.5rem; /* 텍스트와 아이콘 사이 간격 */
+                }
+
+                /* 텍스트 스타일 */
+                .link-text {
+                    font-size: 1rem;
+                    color: #000; /* 기본 검정색 */
+                    font-weight: bold;
+                    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+                }
+
+                /* 아이콘 컨테이너 스타일 */
+                .icon-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px; /* 아이콘 크기 조정 */
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+                }
+
+                /* 아이콘 스타일 */
+                .icon-container i {
+                    font-size: 1rem;
+                }
+
+                /* 호버 효과 */
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    transform: scale(1.1); /* 살짝 확대 */
+                }
+
+                /* 클릭 시 효과 */
+                .icon-container:active {
+                    transform: scale(1); /* 클릭 시 원래 크기로 */
+                }
+            
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                }
+            
+                /* 테이블 스타일 */
+                #approval-tb {
+                    grid-area: 5 / 1 / 6 / 7;
+                    width: 100%; /* 모달의 100% 너비 */
                     border-collapse: collapse;
-                    border-radius: 0.4rem;
+                    border-radius: 0.6rem;
                     overflow: hidden;
                 }
-        
-                th {
+            
+                #approval-tb th {
                     font-weight: bold;
-                    font-size: 1rem !important;
+                    font-size: 0.9rem !important;
                     text-transform: uppercase;
                     border: 1px solid var(--gray-color-dark);
                     padding: 0.5rem;
                     background-color: var(--gray-color);
                     text-align: left;
                 }
-        
-                td {
+            
+                #approval-tb td {
                     font-size: 0.9rem !important;
                     border: 1px solid var(--gray-color-dark);
                     padding: 0.5rem;
                 }
-        
-                tr:nth-child(even) {
+            
+                #approval-tb tr:nth-child(even) {
                     background-color: var(--gray-color-light);
                 }
-
-                .fa-circle-check {
-                    color: green;
-                }
-                .fa-circle-xmark {
-                    color: red;
-                }
-                .modal-approval-sales-list .arrow-box-text {
-                    color: var(--white-color);
-                }
-                .modal-approval-dev-list .arrow-box-text {
-                    color: var(--white-color);
-                }
+            
+                .modal-approval-sales-list .arrow-box-text,
+                .modal-approval-dev-list .arrow-box-text,
                 .modal-approval-ops-list .arrow-box-text {
                     color: var(--white-color);
                 }
@@ -1164,7 +1277,13 @@
         <!-- 절차 (Procedure) Modal -->
         <template id="template-modal-progress-body">
             <div class="modal-content">
-                <h2 class="modal-title">절차 (Procedure)</h2>
+                <div class="title-container">
+                    <h2 class="modal-title">절차 (Procedure)</h2>
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/x/x4KsBw" onclick="window.open(this.dataset.url, '_blank')">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
+
                 <p class="modal-description">
                     SDLC의 절차는 프로젝트를 체계적으로 관리하고 품질을 확보하기 위한 단계별 활동과 검토 체계를 의미합니다.
                 </p>
@@ -1196,82 +1315,101 @@
                         <li><strong class="highlight">종료:</strong> 결과 평가, 문서화, 인수인계</li>
                     </ul>
                 </div>
-                <div class="link-container">
-                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
-                        <i class="fa-solid fa-link"></i>
-                    </div>
-                </div>
             </div>
 
             <style>
+                /* 모달 전체 컨텐츠 스타일 */
                 .modal-content {
-                    padding: 1rem;
+                    padding: 0 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
                     color: #000; /* 기본 검정색 */
                 }
 
-                .modal-title {
-                    font-size: 1.5rem;
-                    margin-bottom: 1rem;
-                    color: #0078D7; /* Doosan 메인 색상 */
+                /* 제목과 링크를 한 줄에 배치하는 컨테이너 */
+                .title-container {
+                    display: flex; /* 제목과 링크를 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 1rem; /* 제목과 링크 사이 간격 */
+                    padding: 0.5rem 0; /* 위아래 여백 */
                 }
 
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                    margin: 0 0 16px 0;
+                }
+
+                /* 아이콘 컨테이너 스타일 */
+                .icon-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px; /* 아이콘 크기 조정 */
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+                }
+
+                /* 아이콘 스타일 */
+                .icon-container i {
+                    font-size: 1rem;
+                }
+
+                /* 호버 효과 */
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    transform: scale(1.1); /* 살짝 확대 */
+                }
+
+                /* 클릭 시 효과 */
+                .icon-container:active {
+                    transform: scale(1); /* 클릭 시 원래 크기로 */
+                }
+            
+                /* 모달 설명 스타일 */
                 .modal-description {
                     margin-bottom: 1rem;
                 }
-
+            
+                /* 리스트 스타일 */
                 .modal-list {
                     padding-left: 1.5rem;
                 }
-
+            
                 .modal-list li {
                     margin-bottom: 0.5rem;
                 }
-
+            
+                /* 강조 텍스트 */
                 .highlight {
                     color: #0055A4; /* Doosan 메인 색상 변형 */
+                    font-weight: bold;
                 }
-
-                /* 추가된 소제목 스타일 */
+            
+                /* 소제목 스타일 */
                 .modal-subtitle {
                     font-size: 1.2rem;
                     margin: 1rem 0 0.5rem;
                     color: #0078D7; /* Doosan 메인 색상 */
                     font-weight: bold;
                 }
-
+            
                 /* 들여쓰기 스타일 */
                 .tab-section {
                     padding-left: 2rem; /* 들여쓰기 추가 */
                 }
-
+            
+                /* 링크 컨테이너 스타일 */
                 .link-container {
                     display: flex;
-                    width: 100%;
-                    justify-content: flex-end;
                     align-items: center;
-                }
-
-                .icon-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background-color: #0078D7; /* 원 배경색 */
-                    color: #fff; /* 아이콘 색상 */
-                    cursor: pointer;
-                    text-align: center;
-                }
-
-                .icon-container i {
-                    font-size: 1.2rem;
-                }
-
-                .icon-container:hover {
-                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    justify-content: space-between; /* 제목과 아이콘을 양쪽 끝으로 배치 */
                 }
             </style>
             
@@ -1288,7 +1426,12 @@
         <!-- 도구 (Tool) Modal -->
         <template id="template-modal-tools-body">
             <div class="modal-content">
-                <h2 class="modal-title">도구 (Tools)</h2>
+                <div class="title-container">
+                    <h2 class="modal-title">도구 (Tools)</h2>
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/x/x4KsBw" onclick="window.open(this.dataset.url, '_blank')">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
                 <p class="modal-description">
                     SDLC의 각 단계에서 업무를 효율적으로 수행하기 위해 사용하는 소프트웨어, 기술 등을 의미합니다.
                 </p>
@@ -1307,82 +1450,101 @@
                         이 도구들은 개발, 테스트, 운영 전반에 걸쳐 협업과 품질 향상을 지원하며, DDI의 디지털 개발 환경을 구성하는 핵심 요소입니다.
                     </p>
                 </div>
-                <div class="link-container">
-                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
-                        <i class="fa-solid fa-link"></i>
-                    </div>
-                </div>
             </div>
 
             <style>
+                /* 모달 전체 컨텐츠 스타일 */
                 .modal-content {
-                    padding: 1rem;
+                    padding: 0 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
                     color: #000; /* 기본 검정색 */
                 }
 
-                .modal-title {
-                    font-size: 1.5rem;
-                    margin-bottom: 1rem;
-                    color: #0078D7; /* Doosan 메인 색상 */
+                /* 제목과 링크를 한 줄에 배치하는 컨테이너 */
+                .title-container {
+                    display: flex; /* 제목과 링크를 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 1rem; /* 제목과 링크 사이 간격 */
+                    padding: 0.5rem 0; /* 위아래 여백 */
                 }
 
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                    margin: 0 0 16px 0;
+                }
+
+                /* 아이콘 컨테이너 스타일 */
+                .icon-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px; /* 아이콘 크기 조정 */
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+                }
+
+                /* 아이콘 스타일 */
+                .icon-container i {
+                    font-size: 1rem;
+                }
+
+                /* 호버 효과 */
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    transform: scale(1.1); /* 살짝 확대 */
+                }
+
+                /* 클릭 시 효과 */
+                .icon-container:active {
+                    transform: scale(1); /* 클릭 시 원래 크기로 */
+                }
+            
+                /* 모달 설명 스타일 */
                 .modal-description {
                     margin-bottom: 1rem;
                 }
-
+            
+                /* 리스트 스타일 */
                 .modal-list {
                     padding-left: 1.5rem;
                 }
-
+            
                 .modal-list li {
                     margin-bottom: 0.5rem;
                 }
-
+            
+                /* 강조 텍스트 */
                 .highlight {
                     color: #0055A4; /* Doosan 메인 색상 변형 */
+                    font-weight: bold;
                 }
-
-                /* 추가된 소제목 스타일 */
+            
+                /* 소제목 스타일 */
                 .modal-subtitle {
                     font-size: 1.2rem;
                     margin: 1rem 0 0.5rem;
                     color: #0078D7; /* Doosan 메인 색상 */
                     font-weight: bold;
                 }
-
+            
                 /* 들여쓰기 스타일 */
                 .tab-section {
                     padding-left: 2rem; /* 들여쓰기 추가 */
                 }
-
+            
+                /* 링크 컨테이너 스타일 */
                 .link-container {
                     display: flex;
-                    width: 100%;
-                    justify-content: flex-end;
                     align-items: center;
-                }
-
-                .icon-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background-color: #0078D7; /* 원 배경색 */
-                    color: #fff; /* 아이콘 색상 */
-                    cursor: pointer;
-                    text-align: center;
-                }
-
-                .icon-container i {
-                    font-size: 1.2rem;
-                }
-
-                .icon-container:hover {
-                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    justify-content: space-between; /* 제목과 아이콘을 양쪽 끝으로 배치 */
                 }
             </style>
 
@@ -1399,7 +1561,12 @@
         <!-- 가이드 (Guide) Modal -->
         <template id="template-modal-guides-body">
             <div class="modal-content">
-                <h2 class="modal-title">가이드 (Guide)</h2>
+                <div class="title-container">
+                    <h2 class="modal-title">가이드 (Guides)</h2>
+                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/x/x4KsBw" onclick="window.open(this.dataset.url, '_blank')">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
                 <p class="modal-description">
                     가이드는 품질 관리 절차와 도구를 효과적으로 활용하기 위한 지침이나 권장사항을 의미합니다. 이는 베스트 프랙티스, 표준, 매뉴얼 등을 포함합니다.
                 </p>
@@ -1416,82 +1583,101 @@
                         <li><strong class="highlight">정보보안 점검:</strong> 정보보안 정책을 준수하고, 보안 점검을 수행</li>
                     </ul>
                 </div>
-                <div class="link-container">
-                    <div class="icon-container" data-url="https://wiki.devops.doosan.com/pages/viewpage.action?pageId=128746183">
-                        <i class="fa-solid fa-link"></i>
-                    </div>
-                </div>
             </div>
 
             <style>
+                /* 모달 전체 컨텐츠 스타일 */
                 .modal-content {
-                    padding: 1rem;
+                    padding: 0 1rem;
                     font-size: 1rem;
                     line-height: 1.5;
                     color: #000; /* 기본 검정색 */
                 }
 
-                .modal-title {
-                    font-size: 1.5rem;
-                    margin-bottom: 1rem;
-                    color: #0078D7; /* Doosan 메인 색상 */
+                /* 제목과 링크를 한 줄에 배치하는 컨테이너 */
+                .title-container {
+                    display: flex; /* 제목과 링크를 한 줄에 배치 */
+                    align-items: center; /* 수직 정렬 */
+                    gap: 1rem; /* 제목과 링크 사이 간격 */
+                    padding: 0.5rem 0; /* 위아래 여백 */
                 }
 
+                /* 모달 제목 스타일 */
+                .modal-title {
+                    font-size: 1.5rem;
+                    color: #0078D7; /* Doosan 메인 색상 */
+                    font-weight: bold;
+                    margin: 0 0 16px 0;
+                }
+
+                /* 아이콘 컨테이너 스타일 */
+                .icon-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px; /* 아이콘 크기 조정 */
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: #0078D7; /* 원 배경색 */
+                    color: #fff; /* 아이콘 색상 */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+                }
+
+                /* 아이콘 스타일 */
+                .icon-container i {
+                    font-size: 1rem;
+                }
+
+                /* 호버 효과 */
+                .icon-container:hover {
+                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    transform: scale(1.1); /* 살짝 확대 */
+                }
+
+                /* 클릭 시 효과 */
+                .icon-container:active {
+                    transform: scale(1); /* 클릭 시 원래 크기로 */
+                }
+            
+                /* 모달 설명 스타일 */
                 .modal-description {
                     margin-bottom: 1rem;
                 }
-
+            
+                /* 리스트 스타일 */
                 .modal-list {
                     padding-left: 1.5rem;
                 }
-
+            
                 .modal-list li {
                     margin-bottom: 0.5rem;
                 }
-
+            
+                /* 강조 텍스트 */
                 .highlight {
                     color: #0055A4; /* Doosan 메인 색상 변형 */
+                    font-weight: bold;
                 }
-
-                /* 추가된 소제목 스타일 */
+            
+                /* 소제목 스타일 */
                 .modal-subtitle {
                     font-size: 1.2rem;
                     margin: 1rem 0 0.5rem;
                     color: #0078D7; /* Doosan 메인 색상 */
                     font-weight: bold;
                 }
-
+            
                 /* 들여쓰기 스타일 */
                 .tab-section {
                     padding-left: 2rem; /* 들여쓰기 추가 */
                 }
-
+            
+                /* 링크 컨테이너 스타일 */
                 .link-container {
                     display: flex;
-                    width: 100%;
-                    justify-content: flex-end;
                     align-items: center;
-                }
-
-                .icon-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background-color: #0078D7; /* 원 배경색 */
-                    color: #fff; /* 아이콘 색상 */
-                    cursor: pointer;
-                    text-align: center;
-                }
-
-                .icon-container i {
-                    font-size: 1.2rem;
-                }
-
-                .icon-container:hover {
-                    background-color: #0055A4; /* 호버 시 색상 변경 */
+                    justify-content: space-between; /* 제목과 아이콘을 양쪽 끝으로 배치 */
                 }
             </style>
 
