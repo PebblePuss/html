@@ -327,7 +327,41 @@
             const containerID = 'sdlc-framework-container';
             (() => {
                 const wordPressContent = document.querySelector(".sdlc-header");
+                const sdlcUtilList = document.createElement("div");
                 const sdlcLegendList = document.createElement("div");
+
+                sdlcUtilList.style.display = "flex"
+                sdlcUtilList.style.flexDirection = "column";
+                sdlcUtilList.style.gap = "0.6rem";
+
+                const sdlcGuideYTLink = document.createElement("div");
+
+                sdlcGuideYTLink.className = "linkBtn"
+                // 스타일 직접 적용
+                sdlcGuideYTLink.style.backgroundColor = "#FF6666"; // 유튜브 빨간색
+                sdlcGuideYTLink.style.color = "white"; // 텍스트 색상
+                sdlcGuideYTLink.style.borderRadius = "0.4rem"; // 둥근 모서리
+                sdlcGuideYTLink.style.padding = "0.5rem 1rem"; // 버튼 패딩
+                sdlcGuideYTLink.style.width = "auto";
+                sdlcGuideYTLink.style.fontSize = "1rem"
+                sdlcGuideYTLink.style.boxShadow = "0 0.2rem 0.5rem rgba(0, 0, 0, 0.1)"
+                sdlcGuideYTLink.style.textDecoration = "none"; // 링크 밑줄 제거
+                sdlcGuideYTLink.style.display = "inline-block"; // 버튼처럼 보이게
+                sdlcGuideYTLink.dataset.url = "https://wiki.devops.doosan.com/x/GBEkC"
+
+                // 텍스트 설정
+                sdlcGuideYTLink.textContent = "프로젝트 관리 온라인 과정 바로가기";
+
+                // 호버 효과 추가
+                sdlcGuideYTLink.addEventListener("mouseover", () => {
+                    sdlcGuideYTLink.style.backgroundColor = "#FF0000"; // 물빠진 빨간색
+                });
+                sdlcGuideYTLink.addEventListener("mouseout", () => {
+                    sdlcGuideYTLink.style.backgroundColor = "#FF6666"; // 원래 유튜브 빨간색
+                });
+
+                // 부모 요소에 추가
+                sdlcUtilList.appendChild(sdlcGuideYTLink);
 
                 wordPressContent.style.display = "flex";
                 wordPressContent.style.gap = "0.6rem";
@@ -385,7 +419,8 @@
                     sdlcLegendList.appendChild(sdlcLegend);
                 });
 
-                wordPressContent.appendChild(sdlcLegendList);
+                sdlcUtilList.appendChild(sdlcLegendList);
+                wordPressContent.appendChild(sdlcUtilList);
             })();
 
             (() => {
@@ -447,6 +482,22 @@
                 }
             }
         </script>
+
+        <style>
+            .sdlc-YT-link {
+                background-color: #FF0000; /* 유튜브 빨간색 */
+                color: white; /* 텍스트 색상 */
+                border-radius: 1rem; /* 둥근 모서리 */
+                padding: 0.5rem 1rem; /* 버튼 패딩 */
+                text-decoration: none; /* 링크 밑줄 제거 */
+                display: inline-block; /* 버튼처럼 보이게 */
+                transition: background-color 0.3s ease; /* 호버 시 부드러운 전환 */
+            }
+
+            .sdlc-YT-link:hover {
+                background-color: #FF6666; /* 물빠진 빨간색 */
+            }
+        </style>
 
         <template id="template-modal">
             <div class="modal-overlay">
